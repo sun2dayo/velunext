@@ -266,6 +266,32 @@
 	--icon-stroke: var(--velunext-accent);
 }
 
+/* Sidebar icons specifically get bumped one shade further, to
+   --velunext-sidebar-active-text, matching the active item's icon
+   colour exactly (it's forced via a direct `stroke` override further
+   up this file — see .active-sidebar .item-anchor svg — which a
+   variable-only rule can't beat). Requested explicitly: every sidebar
+   icon should read as the same colour as the active one, not two
+   adjacent shades of purple. Scoped to the sidebar only, so the rest
+   of the Desk keeps the slightly lighter accent set above. */
+.body-sidebar-container {
+	--icon-stroke: var(--velunext-sidebar-active-text);
+}
+
+/* Most sidebar item icons render via a DIFFERENT mechanism that bypasses
+   --icon-stroke entirely: frappe.utils.icon() renders them with both a
+   ".text-ink-gray-7" class (sets `color`) AND a ".current-color" class
+   (icons.scss: `.current-color { stroke: currentColor; }`), so the
+   stroke tracks `color`, not the --icon-stroke variable — confirmed
+   live (computed stroke stayed neutral grey after the variable change
+   above). ".text-ink-gray-7" is a generic utility reused well beyond
+   the sidebar, so this is scoped tightly to sidebar icons rather than
+   overridden globally. */
+.body-sidebar-container .sidebar-item-icon.text-ink-gray-7,
+.body-sidebar-container svg.text-ink-gray-7 {
+	color: var(--velunext-sidebar-active-text) !important;
+}
+
 /* ==========================================================================
    Erradicação do "azul Frappe" nos ícones de Workspace/Apps
    These big module/app icons come from two different code paths in Frappe
