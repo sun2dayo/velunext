@@ -499,3 +499,24 @@ input[type="checkbox"]:disabled:checked {
 .grid-heading-row .row-index {
 	background-color: var(--velunext-sidebar-hover);
 }
+
+/* ==========================================================================
+   "Getting Started" onboarding widget (.user-onboarding)
+   Same baked-blue module icon as the Apps grid / sidebar header / menu
+   dropdowns (a fourth spot using this Frappe/ERPNext icon system —
+   assets/<app>/icons/desktop_icons/... — <img>, colour baked into the
+   file), same calibrated filter. The module title next to it
+   (.onb-title, e.g. "Selling Setup") uses .font-medium, which our
+   typography rule above does not touch (that only targets bold/strong
+   text, and this is a medium weight, not bold) — coloured directly here
+   instead. Scoped to .onb-title so the dialog's own generic "Getting
+   Started" header caption (which reuses the same .text-base.font-medium
+   utility classes) is left alone.
+   ========================================================================== */
+.onb-title-icon img {
+	filter: hue-rotate(50deg) saturate(0.95);
+}
+
+.onb-title .text-base.font-medium {
+	color: var(--velunext-accent-strong);
+}
