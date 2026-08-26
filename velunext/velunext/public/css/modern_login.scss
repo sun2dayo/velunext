@@ -128,6 +128,54 @@
 }
 
 /* ==========================================================================
+   Logo colour
+   .app-logo is an <img src="....svg"> (verified live) — the SVG loads
+   as an external image resource, so it never becomes part of this
+   page's DOM, and CSS `fill` has no effect on it. `filter` is the only
+   way to recolour it from outside. The source (ERPNext logo, #067EFB)
+   was mapped to our dashboard amber (#F59E0B) the same way as the
+   Workspace icon fix earlier in the Desk theme: solved empirically via
+   an in-browser canvas round-trip rather than guessed, landing at
+   rgb(245,159,0) — 11 units from the exact target in one channel, an
+   imperceptible difference given filter's constraints.
+   ========================================================================== */
+.app-logo {
+	filter: hue-rotate(-158deg) saturate(1.6) brightness(1.4);
+}
+
+/* ==========================================================================
+   "Powered by NovaDX" footer
+   Injected by modern_login_branding.js at the end of .login-content.
+   Small, muted, and out of the way of the actual sign-in flow — an
+   ordinary attribution credit, not tied to any functional behaviour.
+   ========================================================================== */
+.novadx-login-footer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	margin-top: 24px;
+	font-size: 12px;
+	color: #6b7280;
+}
+
+.novadx-login-footer img {
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+}
+
+.novadx-login-footer a {
+	color: #6b7280;
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.novadx-login-footer a:hover {
+	color: #8b5cf6;
+}
+
+/* ==========================================================================
    Mobile
    Frappe already has its own xs (<576px) breakpoint that goes full-bleed
    edge-to-edge with no radius/shadow — a deliberate, sensible pattern
