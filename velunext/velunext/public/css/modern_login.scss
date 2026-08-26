@@ -1,0 +1,147 @@
+/**
+ * VeluNext — modern login/signup/forgot-password page
+ *
+ * Copyright (c) 2026, NovaDX <ola@novadx.pt>
+ * Licensed under the MIT License.
+ *
+ * Targets the real classes rendered by frappe/www/login.html and
+ * scss/login.bundle.scss (verified in source, not guessed): the outer
+ * wrapper is .page-content-wrapper > ... > .for-login (or
+ * .for-signup/.for-forgot/...), each containing one .login-content.page-card.
+ * No JS, no template edits — CSS only, loaded via web_include_css.
+ */
+
+/* ==========================================================================
+   Page background + true centering
+   Frappe's own login.bundle.scss never actually centers the card
+   vertically — .page-content-wrapper and everything above the card are
+   plain `display: block`, confirmed live; the card only *looks*
+   roughly centered because of a fixed 60px top padding plus a short
+   page. `.page-content-wrapper:has(.login-content)` scopes this to
+   only the login/signup/forgot pages (the only ones that ever render
+   that class), so ordinary web pages that share the same wrapper are
+   left untouched.
+   ========================================================================== */
+.page-content-wrapper:has(.login-content) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	padding-top: 0;
+	background-color: #f8fafc;
+}
+
+/* ==========================================================================
+   The login card
+   Previously borderless and the same background as the page itself
+   (background-color: var(--bg-color) on both) — there was no visible
+   "card" at all. Kept the existing max-width/gap/flex layout from
+   login.bundle.scss and only changed appearance.
+   ========================================================================== */
+.login-content.page-card {
+	background-color: #ffffff;
+	border-radius: 16px;
+	padding: 40px 32px;
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   Form inputs
+   These do NOT go through the Desk's .form-control styling at all —
+   login.bundle.scss styles them with a plain type-attribute selector
+   (input[type="text"|"email"|"password"]) scoped inside
+   .page-card-body, compiled (via Sass nesting several levels deep) to
+   something like ".for-login .page-card .page-card-body input[...]" —
+   more specific than a shallow rule here can beat on its own, hence
+   !important on the actual colour/border properties throughout this
+   file (confirmed necessary live: a first pass without it was silently
+   losing to Frappe's compiled selector on every rule below).
+   ========================================================================== */
+.page-card-body input[type="text"],
+.page-card-body input[type="email"],
+.page-card-body input[type="password"] {
+	background-color: #f9fafb !important;
+	border: 1px solid #e5e7eb !important;
+	border-radius: 8px !important;
+	box-shadow: none !important;
+	transition: all 0.2s ease;
+}
+
+.page-card-body input[type="text"]:focus,
+.page-card-body input[type="email"]:focus,
+.page-card-body input[type="password"]:focus {
+	outline: none;
+	border-color: #8b5cf6 !important;
+	background-color: #ffffff !important;
+	box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25) !important;
+}
+
+/* ==========================================================================
+   Buttons
+   .btn-login is the main "Continue" action (currently var(--gray-900),
+   i.e. black); .btn-login-option is the secondary style used by both
+   "Login with Email Link" and the social-login buttons.
+   ========================================================================== */
+.page-card-actions .btn-login,
+.page-card-actions .btn-ldap-login {
+	background: #8b5cf6 !important;
+	border: none !important;
+	border-radius: 8px !important;
+	font-weight: 500 !important;
+	transition: background-color 0.2s ease;
+}
+
+.page-card-actions .btn-login:hover,
+.page-card-actions .btn-login:focus,
+.page-card-actions .btn-login:active,
+.page-card-actions .btn-ldap-login:hover,
+.page-card-actions .btn-ldap-login:focus,
+.page-card-actions .btn-ldap-login:active {
+	background: #7c3aed !important;
+	color: #ffffff !important;
+}
+
+.page-card-actions .btn-login-option {
+	background: transparent !important;
+	color: #4b5563 !important;
+	border: 1px solid #e5e7eb !important;
+	border-radius: 8px !important;
+	transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.page-card-actions .btn-login-option:hover {
+	background: #f5f3ff !important;
+	color: #7c3aed !important;
+	border-color: #ddd6fe !important;
+}
+
+/* "Forgot password?" / "Sign up" links — left as default anchor blue by
+   Frappe, which would clash with an otherwise purple-branded page. */
+.forgot-password-message a,
+.sign-up-message a {
+	color: #7c3aed !important;
+}
+
+.forgot-password-message a:hover,
+.sign-up-message a:hover {
+	color: #6d28d9 !important;
+}
+
+/* ==========================================================================
+   Mobile
+   Frappe already has its own xs (<576px) breakpoint that goes full-bleed
+   edge-to-edge with no radius/shadow — a deliberate, sensible pattern
+   for the smallest phones that this deliberately does not fight. This
+   covers the gap above that (roughly phone-landscape/small-tablet,
+   ≤768px): softer shadow, comfortably narrower than desktop but still
+   a visible card with a safe margin, not edge-to-edge.
+   ========================================================================== */
+@media (max-width: 768px) {
+	.login-content.page-card {
+		width: calc(100% - 32px);
+		max-width: 400px;
+		margin: 0 16px;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+		padding: 32px 24px;
+	}
+}

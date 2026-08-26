@@ -38,8 +38,8 @@ app_include_css = "velunext.bundle.css"
 app_include_js = "velunext.bundle.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/velunext/css/velunext.css"
-# web_include_js = "/assets/velunext/js/velunext.js"
+# Same bundle-name-not-raw-path reasoning as app_include_css above.
+web_include_css = "velunext-web.bundle.css"
 
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "velunext/public/scss/website"
