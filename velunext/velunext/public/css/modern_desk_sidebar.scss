@@ -61,6 +61,15 @@
 	font-weight: 600;
 }
 
+/* Workspace icon at the top of the sidebar (.sidebar-header). Its
+   background-color is set inline to `var()` with no fallback (a bug in
+   Frappe core — header_stroke_color is never assigned), so it's always
+   transparent; the visible colour is the baked-blue SVG in .header-logo
+   img — same #0289F7 source and same hue-rotate fix as the Apps grid. */
+.sidebar-header .header-logo img {
+	filter: hue-rotate(50deg) saturate(0.95);
+}
+
 /* Menu items */
 .standard-sidebar-item {
 	border-radius: var(--velunext-radius);
