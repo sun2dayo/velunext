@@ -733,3 +733,79 @@ input[type="checkbox"]:disabled:checked {
 .splash img {
 	filter: hue-rotate(-158deg) saturate(1.6) brightness(1.4);
 }
+
+/* ==========================================================================
+   Micro-interactions & global consistency polish
+   Four small, independent tweaks — each verified against the real
+   class/markup before writing it, same as everywhere else in this file.
+   ========================================================================== */
+
+/* 1) Workspace shortcut cards — .shortcut-widget-box is real (desk/
+   desktop.scss), already has a border and its own hover state
+   (border-color: var(--invert-neutral)); this adds a lift + soft
+   shadow on top of that, it doesn't replace it. */
+.shortcut-widget-box {
+	transition: all 0.2s ease;
+}
+
+.shortcut-widget-box:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* 2) Navbar search. The visible "Search" control in the navbar is a
+   *button* that opens a modal containing the real input, #navbar-search
+   (confirmed live — there is no always-on input to style directly).
+   It already carries .form-control, so it inherits the Inputs & Forms
+   rules above (clean border, purple focus ring); this layers the
+   pill shape and idle grey fill requested, overriding the .bg-transparent
+   utility class Frappe puts on it (same specificity, one class each,
+   so !important keeps this from depending on source order). */
+#navbar-search {
+	background-color: #f3f4f6 !important;
+	border-radius: 20px !important;
+}
+
+#navbar-search:focus {
+	background-color: #ffffff !important;
+}
+
+/* 3) Avatar initials background. .avatar-frame.standard-image sets its
+   background/text colour inline per-user (style="background-color:
+   var(--dark-green-avatar-bg); ..."), confirmed live — needs !important
+   to beat that inline style. Text stays white for contrast against the
+   solid accent, same as every other avatar variant in this theme. */
+.avatar-frame.standard-image {
+	background-color: var(--velunext-accent) !important;
+	color: #ffffff !important;
+}
+
+/* 4) Scrollbar. Frappe already ships a complete custom scrollbar
+   (desk/scrollbar.scss) driven entirely by two variables —
+   --scrollbar-thumb-color / --scrollbar-track-color — with its own
+   *::-webkit-scrollbar-thumb/-track rules already in place, so
+   redeclaring those pseudo-elements from scratch would just be
+   fighting an equally-specific universal selector for no reason.
+   Remapping the two variables is the correct, intended extension
+   point. The thumb turning accent-purple on hover only needs
+   *:hover::-webkit-scrollbar-thumb — hovering anywhere over a
+   scrollable element (including its own scrollbar) triggers :hover
+   on that element in WebKit/Blink. */
+:root {
+	--scrollbar-thumb-color: #d1d5db;
+	--scrollbar-track-color: transparent;
+}
+
+[data-theme="dark"] {
+	--scrollbar-thumb-color: #4b5563;
+	--scrollbar-track-color: transparent;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+	background: var(--velunext-accent);
+}
+
+*:not(#page-form-builder *)::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
