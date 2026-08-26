@@ -437,11 +437,10 @@ input[type="checkbox"]:disabled:checked {
 	background-color: rgba(139, 92, 246, 0.5) !important;
 }
 
-input[type="checkbox"].disabled-deselected,
-input[type="checkbox"]:disabled:not(:checked) {
-	background-color: rgba(139, 92, 246, 0.08) !important;
-	border-color: var(--velunext-sidebar-border) !important;
-}
+/* Unchecked+disabled is intentionally left at Frappe's own default look
+   (border + inset shadow from checkbox.scss) — tinting its background
+   here too flattened that border/shadow away, leaving a washed-out box
+   with no visible edge instead of a normal-looking disabled checkbox. */
 
 .list-row-container:has(.list-row-checkbox:checked) {
 	background-color: rgba(139, 92, 246, 0.08);
