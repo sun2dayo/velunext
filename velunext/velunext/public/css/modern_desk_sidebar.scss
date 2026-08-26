@@ -1,7 +1,11 @@
 /**
- * VeluNext — modern sidebar theme override
- * Scoped to the Desk sidebar (.body-sidebar-container) and the user profile
- * block only. Does not touch list-view / form styling.
+ * VeluNext — modern Desk theme for ERPNext
+ *
+ * Copyright (c) 2026, NovaDX <ola@novadx.pt>
+ * Licensed under the MIT License.
+ *
+ * Sidebar + user profile styling, plus the global form/list/typography
+ * overrides further down this file (see the section banners below).
  */
 
 :root {
@@ -247,20 +251,12 @@
    the correct override point is those variables, scoped to the sidebar —
    not fighting `stroke`/`fill` on every svg by hand.
    ========================================================================== */
+/* Updated on request: every sidebar icon now uses the accent colour at
+   all times, not just the active item, for a uniform look. The active
+   item still gets the light purple pill background set above it. */
 .body-sidebar-container {
-	--icon-stroke: var(--velunext-sidebar-text);
+	--icon-stroke: var(--velunext-accent);
 	--icon-fill: transparent;
-}
-
-.body-sidebar-container .standard-sidebar-item.active-sidebar,
-.body-sidebar-container .active-sidebar {
-	/* Active/selected item: purple icon + light purple pill background,
-	   matching the active state already set above for text/bg. */
-	--icon-stroke: var(--velunext-sidebar-active-text);
-}
-
-.body-sidebar-container .standard-sidebar-item:hover:not(.active-sidebar) {
-	--icon-stroke: var(--velunext-sidebar-active-text);
 }
 
 /* ==========================================================================
@@ -312,4 +308,147 @@
    the same baked-blue module SVGs via <img class="logo">. */
 .frappe-menu-item-icon img.logo {
 	filter: hue-rotate(50deg) saturate(0.95);
+}
+
+/* ==========================================================================
+   Global primary colour
+   Frappe's own default action colour lives entirely in one variable,
+   --primary (see frappe/public/dist/css/desk.bundle.*.css — it resolves
+   to a static #171717, a near-black; it is not defined anywhere in the
+   scss source, so it must be baked in at build time). It drives, among
+   other things, .btn-primary backgrounds and the custom checkbox
+   checked-state colour (element/checkbox.scss: --checkbox-gradient,
+   which itself is `linear-gradient(var(--primary), var(--primary))`).
+   Overriding it once here is what makes primary buttons AND checked
+   checkboxes (section 4 below) purple, without touching either
+   component directly.
+   ========================================================================== */
+:root {
+	--primary: var(--velunext-accent);
+}
+
+[data-theme="dark"] {
+	--primary: var(--velunext-accent);
+}
+
+/* .btn-primary itself does NOT read --primary at runtime: Bootstrap
+   bakes its background/border/box-shadow into literal hex values at
+   Sass-compile time (see the shipped desk.bundle.*.css — .btn-primary,
+   :hover, :focus and :active are all hardcoded, e.g. #171717/#040404/
+   #000), so the variable override above never reaches it. Re-stated
+   directly here — this is what actually makes primary action buttons
+   (Save, "+ Add ...") match the rest of the theme instead of staying
+   black, covering the "action buttons" part of the Indicators section
+   below as well. */
+.btn-primary {
+	background-color: var(--velunext-accent) !important;
+	border-color: var(--velunext-accent) !important;
+}
+
+.btn-primary:hover {
+	background-color: var(--velunext-accent-strong) !important;
+	border-color: var(--velunext-accent-strong) !important;
+}
+
+.btn-primary:focus,
+.btn-primary.focus {
+	background-color: var(--velunext-accent-strong) !important;
+	border-color: var(--velunext-accent-strong) !important;
+	box-shadow: inset 0 1px #ffffff26, 0 1px 1px #00000013, 0 0 0 2px rgba(139, 92, 246, 0.4) !important;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active {
+	background-color: #6d28d9 !important;
+	border-color: #6d28d9 !important;
+}
+
+/* ==========================================================================
+   Inputs & Forms
+   .form-control's own rule only sets border:none (see
+   scss/common/form.scss); the grey background and box-shadow the user
+   sees come from Bootstrap's base .form-control rule further up the
+   cascade (background-color: var(--control-bg), a hard grey), and its
+   :focus ring is a hardcoded `0 0 0 2px #7c7c7c40` — not backed by a
+   variable at all, so it needs a direct !important override. This also
+   covers the awesomplete/link-field inputs and list-view filter boxes,
+   since they all render as the same <input class="form-control">.
+   ========================================================================== */
+:root {
+	--control-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+	--control-bg: var(--velunext-sidebar-bg);
+}
+
+.form-control {
+	border: 1px solid var(--velunext-sidebar-border);
+	box-shadow: none;
+}
+
+.form-control:focus {
+	border-color: var(--velunext-accent) !important;
+	box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.25) !important;
+}
+
+/* ==========================================================================
+   Typography
+   Recolouring every .control-label would tint every field label on
+   every form, all the time — that hurts readability rather than
+   helping it, so it is deliberately left alone. Scoped instead to
+   genuine emphasis markup, which is what "make bold text pop" actually
+   means in practice: literal <strong>/<b> tags and Frappe/Bootstrap's
+   bold utility classes.
+   ========================================================================== */
+strong,
+b,
+.text-bold,
+.font-bold,
+.font-weight-bold {
+	color: var(--velunext-accent);
+}
+
+/* ==========================================================================
+   List Views & Checkboxes
+   Custom checkboxes (element/checkbox.scss) already read their checked
+   background from --primary, overridden above, so no direct override is
+   needed here — this just adds accent-color as a safety net for any
+   native, non-custom-styled checkbox elsewhere (dialogs, etc.), which
+   accent-color affects; it is a no-op on Frappe's own appearance:none
+   checkboxes, so it cannot conflict with them.
+   Frappe does not ship a "selected row" background at all in this
+   version — no .list-row(-container).selected class exists to
+   override — so this adds one from scratch with :has(), which this
+   Frappe version already relies on elsewhere (desk/list.scss).
+   ========================================================================== */
+input[type="checkbox"] {
+	accent-color: var(--velunext-accent);
+}
+
+.list-row-container:has(.list-row-checkbox:checked) {
+	background-color: rgba(139, 92, 246, 0.08);
+}
+
+[data-theme="dark"] .list-row-container:has(.list-row-checkbox:checked) {
+	background-color: rgba(139, 92, 246, 0.16);
+}
+
+/* ==========================================================================
+   Indicators
+   .indicator-pill.blue (used by default/neutral statuses such as
+   "Enabled") reads its colours from --bg-blue / --text-on-blue
+   (scss/common/indicator.scss's $indicator-colors loop) — remapping
+   those two variables recolours every blue indicator pill AND dot
+   across the whole Desk in one place, rather than fighting the
+   .indicator-pill.blue selector directly. Other status colours (green,
+   red, orange, ...) are semantic and are intentionally left untouched.
+   ========================================================================== */
+:root {
+	--bg-blue: #ede9fe;
+	--text-on-blue: var(--velunext-accent-strong);
+}
+
+[data-theme="dark"] {
+	--bg-blue: rgba(139, 92, 246, 0.18);
+	--text-on-blue: #a78bfa;
 }

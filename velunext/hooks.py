@@ -1,3 +1,8 @@
+# VeluNext — modern Desk theme for ERPNext
+#
+# Copyright (c) 2026, NovaDX <ola@novadx.pt>
+# Licensed under the MIT License.
+
 app_name = "velunext"
 app_title = "VeluNext"
 app_publisher = "novadx"

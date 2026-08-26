@@ -1,4 +1,8 @@
 // VeluNext — theme toggle injected at the bottom of the Desk sidebar.
+//
+// Copyright (c) 2026, NovaDX <ola@novadx.pt>
+// Licensed under the MIT License.
+//
 // Drives Frappe's native theme mechanism (data-theme-mode attribute + the
 // desk.js MutationObserver + user.switch_theme) instead of a separate
 // dark-mode flag, so it stays in sync with the native theme switcher
