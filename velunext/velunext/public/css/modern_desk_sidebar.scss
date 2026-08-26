@@ -8,25 +8,6 @@
  * overrides further down this file (see the section banners below).
  */
 
-/* ==========================================================================
-   Typeface — Plus Jakarta Sans (experimental)
-   A CSS @import must be the first rule in its stylesheet (only
-   @charset may precede it), which is why this sits above even our own
-   :root variables below. --font-stack is the single variable
-   global.scss binds html/body's font-family to, and every other
-   typography consumer in the Desk (quill editor, website base, desk
-   typography) reads the same variable — overriding it once here is
-   enough for the whole app. Easy to try and easy to revert: delete
-   this section (and drop the h1-h6/strong font-weight lines in the
-   Typography section further down back to Frappe's defaults) to go
-   back to the native Inter stack.
-   ========================================================================== */
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
-
-:root {
-	--font-stack: "Plus Jakarta Sans", sans-serif;
-}
-
 :root {
 	--velunext-accent: #8b5cf6;
 	--velunext-accent-strong: #7c3aed;
@@ -475,27 +456,6 @@ b,
 .font-bold,
 .font-weight-bold {
 	color: var(--velunext-accent);
-}
-
-/* Heading/emphasis weight tuned for Plus Jakarta Sans above: 600/700
-   read clearly at this typeface's proportions, matched to the two
-   heavier cuts actually loaded via the @import (400/500/600/700) so
-   the browser never has to synthesize a missing weight. */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	font-weight: 700;
-}
-
-strong,
-b,
-.text-bold,
-.font-bold,
-.font-weight-bold {
-	font-weight: 600;
 }
 
 /* ==========================================================================
