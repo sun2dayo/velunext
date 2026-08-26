@@ -305,3 +305,11 @@
 .app-icon {
 	background-color: var(--velunext-accent) !important;
 }
+
+/* Workspace-switcher dropdown (click the sidebar header) and its nested
+   folder submenus (e.g. Accounting > Invoicing/Payments/...). This is a
+   third, separate code path (frappe.ui.menu / add_menu_item), rendering
+   the same baked-blue module SVGs via <img class="logo">. */
+.frappe-menu-item-icon img.logo {
+	filter: hue-rotate(50deg) saturate(0.95);
+}
