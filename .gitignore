@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# Node / frontend build
+node_modules/
+dist/
+*.log
+
+# Frappe/Bench artifacts
+*.pyc
+.frappe/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Env
+.env
