@@ -293,6 +293,23 @@
 }
 
 /* ==========================================================================
+   Form Sidebar (right-hand panel on a document: Assign/Attachments/
+   Tags/Share, "Last Edited By" section, etc.)
+   A THIRD icon mechanism, different from both cases above:
+   form_sidebar.scss sets `.form-sidebar-items .icon { stroke:
+   var(--text-light); }` directly — a literal property, not routed
+   through --icon-stroke at all, and specific enough (4 classes) that a
+   variable change is powerless against it regardless of where it's
+   set. Needs a matching direct override. The "+" buttons next to each
+   (Assign, Attachments, ...) already look right without any extra rule
+   here: they're `.es-icon`, not `.icon`, so that compound selector
+   never touched them in the first place.
+   ========================================================================== */
+.form-sidebar-items .icon {
+	stroke: var(--velunext-accent) !important;
+}
+
+/* ==========================================================================
    Erradicação do "azul Frappe" nos ícones de Workspace/Apps
    These big module/app icons come from two different code paths in Frappe
    core (frappe/public/js/frappe/utils/utils.js#desktop_icon and
