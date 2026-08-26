@@ -270,18 +270,25 @@
    only way to get a pixel-exact match.
    ========================================================================== */
 
-/* Fallback "letter" icon (no dedicated SVG for that module) */
+/* Fallback "letter" icon (no dedicated SVG for that module). This site runs
+   the "Solid" desktop icon style (solid colour block + white glyph), so we
+   match that: solid accent background, white letter. */
 .desktop-icon .icon-container {
-	background-color: rgba(139, 92, 246, 0.12) !important;
+	background-color: var(--velunext-accent) !important;
 }
 
 .desktop-icon .icon-container .desktop-alphabet {
-	color: var(--velunext-accent) !important;
+	color: #ffffff !important;
 }
 
-/* Module icons with their own baked-blue SVG file — approximate via filter */
+/* Module icons with their own baked-blue SVG file. All of ERPNext's
+   "solid" desktop icons bake in the exact same blue, #0289F7 — measured
+   (via a canvas round-trip in the actual browser, not guessed) that
+   hue-rotate(50deg) saturate(0.95) maps #0289F7 to rgb(142,92,248),
+   ~3 units away from our #8B5CF6 accent (139,92,246). Recompute if
+   Frappe/ERPNext ever change that source blue. */
 .desktop-icon .icon-container img.app-icon {
-	filter: hue-rotate(70deg) saturate(1.4) brightness(0.95);
+	filter: hue-rotate(50deg) saturate(0.95);
 }
 
 /* frappe.ui.app_icon (sidebar app-switcher dropdown, About dialog, etc.) —

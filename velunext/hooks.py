@@ -25,8 +25,12 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-app_include_css = "/assets/velunext/css/modern_desk_sidebar.css"
-app_include_js = "/assets/velunext/js/theme_toggle.js"
+# Referenced by logical bundle name (not a literal /assets/... path) so
+# Frappe resolves it to a content-hashed dist file via assets.json — the
+# raw /assets/... path is served with a 1-year cache-control by nginx and
+# never busts on edits, which was actively biting us during development.
+app_include_css = "velunext.bundle.css"
+app_include_js = "velunext.bundle.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/velunext/css/velunext.css"
