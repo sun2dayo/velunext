@@ -245,18 +245,25 @@
    only the expanded rules above apply — nothing extra needed here. */
 
 /* ==========================================================================
-   Padronização dos ícones da sidebar
+   Icon colour — sidebar, then the whole Desk
    Frappe's icon sprites (.icon/.es-icon) read color from the CSS custom
    properties --icon-stroke / --icon-fill (see scss/common/icons.scss), so
-   the correct override point is those variables, scoped to the sidebar —
-   not fighting `stroke`/`fill` on every svg by hand.
-   ========================================================================== */
-/* Updated on request: every sidebar icon now uses the accent colour at
-   all times, not just the active item, for a uniform look. The active
-   item still gets the light purple pill background set above it. */
-.body-sidebar-container {
+   the correct override point is those variables — not fighting
+   `stroke`/`fill` on every svg by hand.
+   Originally scoped to just the sidebar; extended on request to --root--
+   so every neutral system icon across the whole Desk (list view toolbar
+   — refresh, list-view switcher, sort direction, filter — plus per-row
+   comment/like icons, etc.) follows the same accent. This only affects
+   icons that fall back to this default: an icon explicitly coloured for
+   a reason (delete buttons, red/green status icons) sets its own colour
+   directly and is unaffected by this variable. */
+:root {
 	--icon-stroke: var(--velunext-accent);
 	--icon-fill: transparent;
+}
+
+[data-theme="dark"] {
+	--icon-stroke: var(--velunext-accent);
 }
 
 /* ==========================================================================
@@ -498,6 +505,21 @@ input[type="checkbox"]:disabled:checked {
 .grid-heading-row .row-check,
 .grid-heading-row .row-index {
 	background-color: var(--velunext-sidebar-hover);
+}
+
+/* ==========================================================================
+   List View Column Header
+   The equivalent header bar for list views (Customer, Sales Order, ...)
+   is a different component from the grid above — .list-row-head — but
+   gets the same treatment for consistency. Unlike the grid, its column
+   cells (.list-row-col) are transparent rather than each painting their
+   own opaque background, so a single rule on the header itself is
+   enough here; no cell-level fix needed.
+   ========================================================================== */
+.list-row-head {
+	background-color: var(--velunext-sidebar-hover);
+	color: var(--velunext-accent-strong);
+	font-weight: 600;
 }
 
 /* ==========================================================================
