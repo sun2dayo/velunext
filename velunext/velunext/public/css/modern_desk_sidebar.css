@@ -1,0 +1,291 @@
+/**
+ * VeluNext — modern sidebar theme override
+ * Scoped to the Desk sidebar (.body-sidebar-container) and the user profile
+ * block only. Does not touch list-view / form styling.
+ */
+
+:root {
+	--velunext-accent: #8b5cf6;
+	--velunext-accent-strong: #7c3aed;
+	--velunext-sidebar-bg: #ffffff;
+	--velunext-sidebar-text: #4b5563;
+	--velunext-sidebar-text-strong: #1f2937;
+	--velunext-sidebar-border: #e5e7eb;
+	--velunext-sidebar-hover: #f5f3ff;
+	--velunext-sidebar-active-bg: #ede9fe;
+	--velunext-sidebar-active-text: #7c3aed;
+	--velunext-panel-bg: #f8fafc;
+	--velunext-toggle-track: #8b5cf6;
+	--velunext-toggle-knob: #ffffff;
+	--velunext-radius: 10px;
+}
+
+[data-theme="dark"] {
+	--velunext-accent: #8b5cf6;
+	--velunext-accent-strong: #a78bfa;
+	--velunext-sidebar-bg: #15131c;
+	--velunext-sidebar-text: #cbd5e1;
+	--velunext-sidebar-text-strong: #f1f5f9;
+	--velunext-sidebar-border: rgba(255, 255, 255, 0.08);
+	--velunext-sidebar-hover: rgba(139, 92, 246, 0.12);
+	--velunext-sidebar-active-bg: rgba(139, 92, 246, 0.2);
+	--velunext-sidebar-active-text: #a78bfa;
+	--velunext-panel-bg: #1d1a27;
+	--velunext-toggle-track: #8b5cf6;
+	--velunext-toggle-knob: #ffffff;
+}
+
+/* Map onto Frappe's native sidebar variables, scoped to the sidebar only */
+.body-sidebar-container {
+	--sidebar-hover-color: var(--velunext-sidebar-hover);
+	--sidebar-active-color: var(--velunext-sidebar-active-bg);
+	--sidebar-border-color: var(--velunext-sidebar-border);
+	--divider-color: var(--velunext-sidebar-border);
+	--surface-menu-bar: var(--velunext-sidebar-bg);
+}
+
+.body-sidebar {
+	border-right: 1px solid var(--velunext-sidebar-border);
+}
+
+/* Sidebar header (app switcher) */
+.sidebar-header {
+	border-radius: var(--velunext-radius);
+}
+.sidebar-header:hover,
+.sidebar-header.hover {
+	background: var(--velunext-sidebar-hover);
+}
+.sidebar-header .header-title {
+	color: var(--velunext-sidebar-text-strong);
+	font-weight: 600;
+}
+
+/* Menu items */
+.standard-sidebar-item {
+	border-radius: var(--velunext-radius);
+	margin-bottom: 3px;
+}
+
+.standard-sidebar-item .item-anchor {
+	border-radius: var(--velunext-radius);
+	color: var(--velunext-sidebar-text);
+}
+
+.standard-sidebar-item .item-anchor svg {
+	stroke-width: 1.5px;
+}
+
+.standard-sidebar-item:not(.active-sidebar):has(a:not(.section-break)):hover {
+	background: var(--velunext-sidebar-hover) !important;
+	border-radius: var(--velunext-radius);
+}
+
+.standard-sidebar-item.active-sidebar,
+.active-sidebar {
+	background: var(--velunext-sidebar-active-bg) !important;
+	border-radius: var(--velunext-radius);
+	box-shadow: none;
+}
+
+.standard-sidebar-item.active-sidebar .item-anchor,
+.active-sidebar .item-anchor {
+	color: var(--velunext-sidebar-active-text) !important;
+	font-weight: 600;
+}
+
+.standard-sidebar-item.active-sidebar .item-anchor svg,
+.active-sidebar .item-anchor svg {
+	stroke: var(--velunext-sidebar-active-text) !important;
+	color: var(--velunext-sidebar-active-text) !important;
+}
+
+.sidebar-item-label {
+	font-size: var(--text-sm);
+}
+
+.divider {
+	border-top: 1px solid var(--velunext-sidebar-border);
+}
+
+/* User profile block */
+.dropdown-navbar-user .sidebar-user-button {
+	border-radius: var(--velunext-radius);
+}
+
+.dropdown-navbar-user .sidebar-user-button:hover {
+	background: var(--velunext-sidebar-hover);
+}
+
+.dropdown-navbar-user .avatar,
+.dropdown-navbar-user .avatar-frame {
+	border-radius: 50% !important;
+	border: 2px solid var(--velunext-sidebar-border);
+}
+
+.avatar-name-email span:first-child {
+	color: var(--velunext-sidebar-text-strong);
+	font-weight: 600;
+}
+
+.avatar-name-email span:last-child {
+	color: var(--velunext-sidebar-text);
+}
+
+/* ==========================================================================
+   Theme toggle — injected by theme_toggle.js at the bottom of the sidebar.
+   Base rules below target the DEFAULT (collapsed, ~50px) sidebar state,
+   since .body-sidebar-container has no width modifier by default — Frappe
+   only adds ".expanded" on hover/pin (--sidebar-width, ~220px). The
+   ".expanded" block further down restyles it into the bigger pill-in-card
+   look once there is room. There are no text labels in this component, so
+   nothing needs to be hidden in the collapsed state — only re-sized.
+   ========================================================================== */
+.velunext-theme-toggle-panel {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 4px auto 10px auto;
+	transition: padding 0.15s ease, background-color 0.15s ease;
+}
+
+.velunext-theme-toggle {
+	position: relative;
+	border-radius: 999px;
+	background: var(--velunext-toggle-track);
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	display: block;
+	flex-shrink: 0;
+}
+
+.velunext-theme-toggle .velunext-toggle-knob {
+	position: absolute;
+	border-radius: 50%;
+	background: var(--velunext-toggle-knob);
+	color: var(--velunext-accent-strong);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: left 0.2s ease;
+}
+
+.velunext-theme-toggle .velunext-toggle-knob svg {
+	width: 60%;
+	height: 60%;
+}
+
+/* Collapsed sidebar (default): bare, minimal switch, no card/shadow so it
+   never overflows the ~34px content width (50px sidebar - 16px padding). */
+.body-sidebar-container:not(.expanded) .velunext-theme-toggle-panel {
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	padding: 0;
+	width: 100%;
+}
+
+.body-sidebar-container:not(.expanded) .velunext-theme-toggle {
+	width: 28px;
+	height: 16px;
+}
+
+.body-sidebar-container:not(.expanded) .velunext-theme-toggle .velunext-toggle-knob {
+	width: 12px;
+	height: 12px;
+	top: 2px;
+	left: 2px;
+}
+
+[data-theme="dark"] .body-sidebar-container:not(.expanded) .velunext-theme-toggle .velunext-toggle-knob {
+	left: 14px;
+}
+
+/* Expanded sidebar (pinned/hovered, ~220px): elevated pill-card, more room. */
+.body-sidebar-container.expanded .velunext-theme-toggle-panel {
+	background: var(--velunext-panel-bg);
+	border: 1px solid var(--velunext-sidebar-border);
+	border-radius: 999px;
+	padding: 5px;
+	width: fit-content;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.body-sidebar-container.expanded .velunext-theme-toggle {
+	width: 40px;
+	height: 22px;
+}
+
+.body-sidebar-container.expanded .velunext-theme-toggle .velunext-toggle-knob {
+	width: 18px;
+	height: 18px;
+	top: 2px;
+	left: 2px;
+}
+
+[data-theme="dark"] .body-sidebar-container.expanded .velunext-theme-toggle .velunext-toggle-knob {
+	left: 20px;
+}
+
+/* Mobile breakpoint: sidebar is fully hidden unless .expanded (overlay), so
+   only the expanded rules above apply — nothing extra needed here. */
+
+/* ==========================================================================
+   Padronização dos ícones da sidebar
+   Frappe's icon sprites (.icon/.es-icon) read color from the CSS custom
+   properties --icon-stroke / --icon-fill (see scss/common/icons.scss), so
+   the correct override point is those variables, scoped to the sidebar —
+   not fighting `stroke`/`fill` on every svg by hand.
+   ========================================================================== */
+.body-sidebar-container {
+	--icon-stroke: var(--velunext-sidebar-text);
+	--icon-fill: transparent;
+}
+
+.body-sidebar-container .standard-sidebar-item.active-sidebar,
+.body-sidebar-container .active-sidebar {
+	/* Active/selected item: purple icon + light purple pill background,
+	   matching the active state already set above for text/bg. */
+	--icon-stroke: var(--velunext-sidebar-active-text);
+}
+
+.body-sidebar-container .standard-sidebar-item:hover:not(.active-sidebar) {
+	--icon-stroke: var(--velunext-sidebar-active-text);
+}
+
+/* ==========================================================================
+   Erradicação do "azul Frappe" nos ícones de Workspace/Apps
+   These big module/app icons come from two different code paths in Frappe
+   core (frappe/public/js/frappe/utils/utils.js#desktop_icon and
+   frappe/public/js/frappe/ui/app_icon.js), and BOTH set their color via an
+   *inline* style attribute (jQuery .css(), default palette "#0289F7") —
+   not a class or CSS variable. `!important` is required to beat inline
+   styles, and is the only way to reach them from an external stylesheet.
+   Caveat: module icons that ship their own dedicated SVG file
+   (assets/<app>/icons/desktop_icons/...) are loaded as <img>, with the
+   blue baked into the file itself — no CSS variable reaches inside an
+   <img>, so those can only be approximated with a hue-rotate filter, not
+   matched to the exact accent purple. Swapping those SVG assets is the
+   only way to get a pixel-exact match.
+   ========================================================================== */
+
+/* Fallback "letter" icon (no dedicated SVG for that module) */
+.desktop-icon .icon-container {
+	background-color: rgba(139, 92, 246, 0.12) !important;
+}
+
+.desktop-icon .icon-container .desktop-alphabet {
+	color: var(--velunext-accent) !important;
+}
+
+/* Module icons with their own baked-blue SVG file — approximate via filter */
+.desktop-icon .icon-container img.app-icon {
+	filter: hue-rotate(70deg) saturate(1.4) brightness(0.95);
+}
+
+/* frappe.ui.app_icon (sidebar app-switcher dropdown, About dialog, etc.) —
+   also sets background-color inline from the Module Def's "color" field. */
+.app-icon {
+	background-color: var(--velunext-accent) !important;
+}

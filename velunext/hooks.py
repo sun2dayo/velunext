@@ -25,8 +25,8 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/velunext/css/velunext.css"
-# app_include_js = "/assets/velunext/js/velunext.js"
+app_include_css = "/assets/velunext/css/modern_desk_sidebar.css"
+app_include_js = "/assets/velunext/js/theme_toggle.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/velunext/css/velunext.css"
