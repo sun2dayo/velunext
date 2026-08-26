@@ -360,6 +360,27 @@
 	filter: hue-rotate(50deg) saturate(0.95);
 }
 
+/* "Framework" and "Frappe Framework" tiles are a special case within
+   the same icon family: frappe-framework-logo.svg bakes its own
+   rounded-square background directly into the file (fill="#7B808A", a
+   near-neutral grey — confirmed by reading the SVG source), so
+   hue-rotate does nothing to it (hue-rotate has no effect on a colour
+   with ~zero saturation, unlike the saturated blue used everywhere
+   else). Needed grayscale+sepia first to inject a tintable warm base,
+   then hue-rotate/saturate/brightness to land on the exact amber —
+   solved the same empirical way, via canvas, landing 1.4 units from
+   #F59E0B. Targeted by [src*=] so it reaches this logo wherever it
+   appears (Apps grid, sidebar header, dropdown), not just one spot. */
+img[src*="frappe-framework-logo"] {
+	/* !important: the general blue-icon rule above
+	   (.desktop-icon .icon-container img.app-icon, 3 classes) is more
+	   specific than this attribute selector (1 element + 1 attribute)
+	   and was winning by specificity alone — even though hue-rotate
+	   has no visible effect on this grey logo, the cascade still
+	   picked that declaration over this one, confirmed live. */
+	filter: grayscale(1) sepia(1) hue-rotate(-0.5deg) saturate(4.1) brightness(1.08) !important;
+}
+
 /* ==========================================================================
    Global primary colour
    Frappe's own default action colour lives entirely in one variable,
