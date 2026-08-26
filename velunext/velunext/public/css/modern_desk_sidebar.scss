@@ -690,3 +690,20 @@ input[type="checkbox"]:disabled:checked {
 .number-widget-box .widget-body .number {
 	color: var(--velunext-sidebar-text-strong);
 }
+
+/* ==========================================================================
+   Boot splash screen (the blue logo shown for a couple seconds on
+   /desk while it loads — after login, and on a hard refresh of the
+   Desk)
+   templates/includes/splash_screen.html renders <div class="centered
+   splash"><img src="/assets/erpnext/images/erpnext-logo.svg">
+   (confirmed by fetching desk.html's own server-rendered source) —
+   the exact same external SVG <img> as the login page logo, so `fill`
+   can't reach it for the same reason: it never becomes part of this
+   page's DOM. Reused the exact filter already calibrated for that
+   logo (see modern_login.scss) rather than recalculating it, since
+   it's the same source file and the same target amber.
+   ========================================================================== */
+.splash img {
+	filter: hue-rotate(-158deg) saturate(1.6) brightness(1.4);
+}
