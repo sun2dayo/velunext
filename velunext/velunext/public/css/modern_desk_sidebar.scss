@@ -469,3 +469,23 @@ input[type="checkbox"]:disabled:checked {
 	--bg-blue: rgba(139, 92, 246, 0.18);
 	--text-on-blue: #a78bfa;
 }
+
+/* ==========================================================================
+   Grid / Child Table Headers
+   The column header bar of every child table (Items, Sales Taxes and
+   Charges, and every other grid in the Desk — they all share this one
+   component, common/grid.scss) is .grid-heading-row, coloured via
+   --gray-600 text over a --subtle-fg background. --subtle-fg itself is
+   reused well beyond grids (list view, form sidebar, global search), so
+   it's overridden locally on .grid-heading-row's own row instead of
+   globally, to avoid recolouring all of those unrelated surfaces too.
+   ========================================================================== */
+.grid-heading-row {
+	color: var(--velunext-accent-strong);
+	font-weight: 600;
+	border-bottom: 1px solid var(--velunext-sidebar-border);
+}
+
+.grid-heading-row .grid-row {
+	background-color: var(--velunext-sidebar-hover);
+}
