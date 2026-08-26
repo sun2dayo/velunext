@@ -425,6 +425,24 @@ input[type="checkbox"] {
 	accent-color: var(--velunext-accent);
 }
 
+/* Disabled checkboxes (read-only fields) are a SEPARATE branch in
+   checkbox.scss with their own hardcoded colours — background-color:
+   var(--gray-600) when checked, var(--disabled-control-bg) when not —
+   neither of which falls back to --primary, so they were left out of
+   the override above. Tinted rather than fully solid, to keep the
+   "disabled" meaning visible instead of looking identical to an
+   editable, checked box. */
+input[type="checkbox"].disabled-selected,
+input[type="checkbox"]:disabled:checked {
+	background-color: rgba(139, 92, 246, 0.5) !important;
+}
+
+input[type="checkbox"].disabled-deselected,
+input[type="checkbox"]:disabled:not(:checked) {
+	background-color: rgba(139, 92, 246, 0.08) !important;
+	border-color: var(--velunext-sidebar-border) !important;
+}
+
 .list-row-container:has(.list-row-checkbox:checked) {
 	background-color: rgba(139, 92, 246, 0.08);
 }
