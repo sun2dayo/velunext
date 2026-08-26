@@ -575,6 +575,21 @@ input[type="checkbox"]:disabled:checked {
 	stroke: var(--velunext-accent) !important;
 }
 
+/* Tooltip legend swatch (the small square next to the value on hover)
+   is ALSO an inline style, same as the series colours above — and,
+   confirmed live, the tooltip is rendered as a child of .chart-container
+   itself, so the --charts-tooltip-* variables above already reach it
+   correctly. The swatch is pinned to the theme purple regardless of
+   whether the point being hovered is a line or a bar series — there is
+   no selector available to tell which series colour a given tooltip
+   instance belongs to (both use the exact same .tooltip-legend markup),
+   so an exact per-series match isn't possible here; a single consistent
+   accent swatch reads as intentional rather than a mismatched leftover
+   pink, which is the actual complaint this fixes. */
+.chart-container .tooltip-legend {
+	background: var(--velunext-accent) !important;
+}
+
 .chart-container .region-fill {
 	fill: none !important;
 }
