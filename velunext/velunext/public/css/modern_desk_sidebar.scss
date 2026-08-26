@@ -477,15 +477,25 @@ input[type="checkbox"]:disabled:checked {
    component, common/grid.scss) is .grid-heading-row, coloured via
    --gray-600 text over a --subtle-fg background. --subtle-fg itself is
    reused well beyond grids (list view, form sidebar, global search), so
-   it's overridden locally on .grid-heading-row's own row instead of
-   globally, to avoid recolouring all of those unrelated surfaces too.
-   ========================================================================== */
+   it's overridden locally instead of globally, to avoid recolouring all
+   of those unrelated surfaces too.
+   Painting the background on .grid-row alone wasn't enough: each cell
+   (.grid-static-col, plus the checkbox/row-number columns .row-check
+   and .row-index) paints its own OPAQUE background-color: var(--subtle-fg)
+   on top of it, per grid.scss line ~65 — leaving only the thin gaps
+   between cells showing our tint, which is the "patchy, not proportional"
+   look reported. Fixed by tinting those cells directly instead, scoped
+   to .grid-heading-row so the same classes on ordinary data rows (e.g.
+   read-only columns) are left untouched. */
 .grid-heading-row {
 	color: var(--velunext-accent-strong);
 	font-weight: 600;
 	border-bottom: 1px solid var(--velunext-sidebar-border);
 }
 
-.grid-heading-row .grid-row {
+.grid-heading-row .grid-row,
+.grid-heading-row .grid-static-col,
+.grid-heading-row .row-check,
+.grid-heading-row .row-index {
 	background-color: var(--velunext-sidebar-hover);
 }
