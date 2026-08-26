@@ -366,19 +366,24 @@
    near-neutral grey — confirmed by reading the SVG source), so
    hue-rotate does nothing to it (hue-rotate has no effect on a colour
    with ~zero saturation, unlike the saturated blue used everywhere
-   else). Needed grayscale+sepia first to inject a tintable warm base,
-   then hue-rotate/saturate/brightness to land on the exact amber —
-   solved the same empirical way, via canvas, landing 1.4 units from
-   #F59E0B. Targeted by [src*=] so it reaches this logo wherever it
-   appears (Apps grid, sidebar header, dropdown), not just one spot. */
+   else). A grayscale+sepia+hue-rotate filter chain *can* fake a tint
+   onto grey, but it inevitably tints the white cube glyph too (sepia
+   has no clean way to leave true white alone) — reported as looking
+   "washed with yellow" instead of a crisp white icon. Swapped for an
+   exact fix instead: a second copy of the same SVG with only the
+   background fill changed to the precise accent
+   (framework-icon-amber.svg — background-color #F59E0B, glyph left as
+   literal fill="white"), swapped in via `content: url()`, which
+   Chromium/Firefox support for replacing what an <img> renders without
+   touching its `src` attribute, the surrounding HTML, or any other
+   background/box styling on its container. Targeted by [src*=] so it
+   reaches this logo wherever it appears (Apps grid, sidebar header,
+   dropdown), not just one spot; !important for the same specificity
+   reason as before (the general 3-class blue-icon rule still matches
+   this element and would otherwise win the cascade). */
 img[src*="frappe-framework-logo"] {
-	/* !important: the general blue-icon rule above
-	   (.desktop-icon .icon-container img.app-icon, 3 classes) is more
-	   specific than this attribute selector (1 element + 1 attribute)
-	   and was winning by specificity alone — even though hue-rotate
-	   has no visible effect on this grey logo, the cascade still
-	   picked that declaration over this one, confirmed live. */
-	filter: grayscale(1) sepia(1) hue-rotate(-0.5deg) saturate(4.1) brightness(1.08) !important;
+	content: url("/assets/velunext/images/framework-icon-amber.svg") !important;
+	filter: none !important;
 }
 
 /* ==========================================================================
