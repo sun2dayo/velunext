@@ -520,3 +520,85 @@ input[type="checkbox"]:disabled:checked {
 .onb-title .text-base.font-medium {
 	color: var(--velunext-accent-strong);
 }
+
+/* ==========================================================================
+   Dashboards & Charts
+   Two very different colour mechanisms are at play here, discovered by
+   reading node_modules/frappe-charts and checking rendered SVG output
+   live rather than assuming either way:
+
+   1. Chart CHROME (axis labels, gridlines, tooltip, legend) is properly
+      themeable: frappe-charts.min.css defines it entirely through its
+      own CSS custom properties (--charts-label-color,
+      --charts-axis-line-color, --charts-tooltip-*, --charts-legend-*).
+      Remapping those is the correct, intended way to theme it.
+
+   2. Chart SERIES colour (the line stroke, the region fill under it,
+      bar fill) is NOT themeable that way: frappe-charts picks from a
+      hardcoded hex palette baked into its own JS bundle and writes it
+      straight into each SVG element's `style` attribute at render time
+      (confirmed on a live chart: style="stroke: rgb(246,131,174)...").
+      A stylesheet rule CAN still beat a plain (non-!important) inline
+      style, so --important-- overrides on .line-graph-path / .bar work
+      reliably for the crisp line/bar colour itself. The soft area-fill
+      under a line is a different story: it references a per-colour
+      generated SVG <linearGradient id="path-fill-gradient-#F683AE-...">
+      that lives elsewhere in the DOM — there is no stable id to point a
+      static override at, so instead of a wrong/mismatched gradient it
+      is simply turned off in favour of a plain crisp line, which reads
+      as more modern anyway.
+
+   Two coordinated accent colours are used for series instead of a
+   single flat purple everywhere, since every dashboard chart here
+   happens to be single-series (recolouring a genuinely multi-series
+   chart this way would make its series indistinguishable) — line
+   charts in the theme purple, bar charts in a warm amber that pairs
+   with it, so a dashboard full of cards still reads as one coordinated
+   palette rather than a wall of identical purple.
+   ========================================================================== */
+:root {
+	--velunext-chart-bar: #f59e0b;
+}
+
+.chart-container {
+	--charts-label-color: var(--velunext-sidebar-text);
+	--charts-axis-line-color: var(--velunext-sidebar-border);
+	--charts-tooltip-bg: var(--velunext-panel-bg);
+	--charts-tooltip-title: var(--velunext-sidebar-text);
+	--charts-tooltip-value: var(--velunext-sidebar-text-strong);
+	--charts-legend-label: var(--velunext-sidebar-text);
+	--charts-legend-value: var(--velunext-sidebar-text-strong);
+}
+
+.chart-container .line-graph-path,
+.chart-container .path-group path {
+	stroke: var(--velunext-accent) !important;
+}
+
+.chart-container .region-fill {
+	fill: none !important;
+}
+
+.chart-container .bar {
+	fill: var(--velunext-chart-bar) !important;
+}
+
+/* Dashboard cards (number KPIs + chart widgets share the same .widget
+   wrapper) — a calmer border and a purple-tinted heading tie each card
+   back to the sidebar/grid styling above instead of Frappe's default
+   plain grey/black. */
+.widget.number-widget-box,
+.widget.dashboard-widget-box {
+	border: 1px solid var(--velunext-sidebar-border);
+}
+
+.widget .widget-head .widget-label .widget-title {
+	/* Frappe nests this 3 levels deep (.widget-head .widget-label
+	   .widget-title), which otherwise beats a plain .widget .widget-title
+	   rule on specificity alone regardless of source order. */
+	color: var(--velunext-accent-strong) !important;
+}
+
+.number-widget-box .widget-body .number {
+	color: var(--velunext-sidebar-text-strong);
+}
