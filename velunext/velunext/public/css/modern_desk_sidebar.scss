@@ -522,6 +522,14 @@ input[type="checkbox"]:disabled:checked {
 	font-weight: 600;
 }
 
+/* The right-hand group (result count + "liked by me" heart) is a
+   separate element, .level-right, that paints its own opaque
+   background on top of the header — the same layering issue as the
+   grid cells above, just with one element instead of many. */
+.list-row-head .level-right {
+	background-color: var(--velunext-sidebar-hover);
+}
+
 /* ==========================================================================
    "Getting Started" onboarding widget (.user-onboarding)
    Same baked-blue module icon as the Apps grid / sidebar header / menu
