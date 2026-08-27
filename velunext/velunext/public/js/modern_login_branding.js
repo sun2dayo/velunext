@@ -1,29 +1,24 @@
-// VeluNext — login page branding (favicon + "Powered by NovaDX" credit)
+// VeluNext — login page branding ("Powered by NovaDX" credit)
 //
 // Copyright (c) 2026, NovaDX <ola@novadx.pt>
 // Licensed under the MIT License.
 //
 // Public web-page script (web_include_js) — runs on every website page,
-// but the footer injection only does anything on pages that actually
-// render a .login-content card (login/signup/forgot-password).
+// but only does anything on pages that actually render a .login-content
+// card (login/signup/forgot-password).
+//
+// Favicon is NOT handled here. It used to be: this script replaced
+// <link rel="icon"/"shortcut icon"> client-side, which only ever ran
+// on public web pages (web_include_js doesn't load on /desk at all —
+// confirmed the tab icon stayed native there). Frappe already has a
+// proper mechanism that covers both: desk.html and templates/base.html
+// both render the SAME `favicon` context variable, sourced from
+// Website Settings.favicon. Set once there
+// (Website Settings > favicon = /assets/velunext/images/X_Overlay.png)
+// it's server-rendered on every page, desk included, with no
+// client-side flash of the native icon first.
 (function () {
 	const LOGO_URL = "/assets/velunext/images/X_Overlay.png";
-
-	function set_favicon() {
-		const existing = document.querySelectorAll(
-			'link[rel="icon"], link[rel="shortcut icon"]'
-		);
-		if (existing.length) {
-			existing.forEach((link) => {
-				link.href = LOGO_URL;
-			});
-			return;
-		}
-		const link = document.createElement("link");
-		link.rel = "shortcut icon";
-		link.href = LOGO_URL;
-		document.head.appendChild(link);
-	}
 
 	function add_login_footer() {
 		const card = document.querySelector(".login-content");
@@ -50,7 +45,6 @@
 	}
 
 	function init() {
-		set_favicon();
 		add_login_footer();
 	}
 
