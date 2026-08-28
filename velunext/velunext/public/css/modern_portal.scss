@@ -1,0 +1,178 @@
+/**
+ * VeluNext — Customer Portal (web_include_css)
+ *
+ * Copyright (c) 2026, NovaDX <ola@novadx.pt>
+ * Licensed under the MIT License.
+ *
+ * Covers the native portal routes registered in erpnext/hooks.py's
+ * standard_portal_menu_items (/orders, /invoices, /quotations,
+ * /purchase-orders, /shipments, /addresses, /timesheets, ...), all of
+ * which share the same layout: templates/web.html > .web-sidebar
+ * (templates/includes/web_sidebar.html) + a list of
+ * .web-list-item.transaction-list-item rows
+ * (erpnext/templates/includes/transaction_row.html) — both confirmed
+ * by reading the real templates and by inspecting the live DOM, not
+ * assumed. /me is a structural exception, handled in its own section
+ * below.
+ */
+
+/* ==========================================================================
+   1) Global background + text
+   No .web-page/.web-template wrapper class exists on <body> for these
+   routes (confirmed live — body has no class at all) — that's fine to
+   target directly since this stylesheet (web_include_css) only ever
+   loads on website/portal pages, never on the Desk.
+   ========================================================================== */
+body {
+	background-color: #f8fafc;
+	color: #1f2937;
+}
+
+/* ==========================================================================
+   2) Sidebar navigation (.web-sidebar)
+   .sidebar-item a.active already reads var(--primary) / var(--primary-light)
+   natively (frappe/public/scss website bundle) — --primary-light isn't
+   actually defined anywhere in core (confirmed: only --primary is), so
+   the active state currently renders with no background at all. Setting
+   both variables here is enough on its own; no need to hand-write the
+   active-state rule. Only the plain/hover states (hardcoded colours,
+   not variables) need explicit overrides.
+   ========================================================================== */
+:root {
+	--primary: #8b5cf6;
+	--primary-light: rgba(139, 92, 246, 0.1);
+}
+
+/* :not(.active) here, not just a plain `a` selector: .web-sidebar
+   .sidebar-item a and the native .sidebar-item a.active rule have the
+   IDENTICAL specificity (two classes + one element each), so this
+   stylesheet loading after the core website bundle would otherwise win
+   the tie and silently overwrite the active item's colour/background —
+   confirmed live (the active item rendered in plain grey, not purple,
+   before this exclusion was added). */
+.web-sidebar .sidebar-item a:not(.active) {
+	border: none !important;
+	background-color: transparent;
+	border-radius: 8px;
+	color: #4b5563;
+}
+
+.web-sidebar .sidebar-item a:hover:not(.active) {
+	color: #1f2937 !important;
+	background-color: #f3f4f6;
+}
+
+.web-sidebar .sidebar-item a.active {
+	font-weight: 600;
+	border-radius: 8px;
+	/* Belt-and-braces beyond the --primary/--primary-light variables
+	   above: !important so this can never again lose a specificity tie
+	   to a sibling rule, regardless of stylesheet order. */
+	color: var(--primary) !important;
+	background-color: var(--primary-light) !important;
+}
+
+.web-sidebar .sidebar-item a.active:hover {
+	color: var(--primary) !important;
+	background-color: var(--primary-light) !important;
+}
+
+/* ==========================================================================
+   3) Content cards & listings (.web-list-item)
+   There is no .card in these native list pages — .web-list-item is the
+   real per-row container (erpnext/templates/includes/transaction_row.html),
+   currently borderless/transparent. .card is styled too, defensively,
+   for any other website page that does use plain Bootstrap cards.
+   ========================================================================== */
+.web-list-item,
+.card {
+	background-color: #ffffff;
+	border: none !important;
+	border-radius: 16px;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+	padding: 1rem;
+	margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   4) Buttons & status badges
+   .btn-primary's background is a literal hex baked in at Bootstrap
+   compile time (#171717), not routed through --primary at runtime —
+   confirmed in the shipped website.bundle.css, same as the Desk theme's
+   .btn-primary and the login page's "Continue" button — needs
+   !important for the same reason.
+   .indicator-pill (NOT .badge — that's not what this component is
+   called) is already pill-shaped with pastel colours out of the box
+   (confirmed live: bg rgb(228,245,233)/text rgb(22,121,76) on a green
+   pill) via common/indicator.scss's per-colour loop. Only the "blue"
+   variant needs remapping to the brand purple, the same two variables
+   as the Desk theme — every other status colour (green/red/orange/...)
+   is semantic and deliberately left alone.
+   ========================================================================== */
+.btn-primary {
+	background-color: #8b5cf6 !important;
+	border-color: #8b5cf6 !important;
+	border-radius: 8px !important;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+	background-color: #7c3aed !important;
+	border-color: #7c3aed !important;
+}
+
+:root {
+	--bg-blue: #ede9fe;
+	--text-on-blue: #7c3aed;
+}
+
+/* ==========================================================================
+   5) Mobile (<=768px)
+   Cards go edge-to-edge (no outer side margin) while keeping their own
+   internal padding, per request. The sidebar collapses into
+   .navbar-collapse on mobile (Bootstrap's own behaviour, from
+   templates/web.html's navbar) — the border-radius/border removal
+   above already applies there too since it targets the same
+   .sidebar-item a regardless of viewport, so there's no separate
+   "duplicate border" case to fix.
+   -44px, not -15px: measured live at 375px width, two ancestors add up
+   between .web-list-item and the viewport edge — main.container
+   (24px each side) AND .website-list (20px each side, from
+   list.html's own wrapper) — a plain Bootstrap-gutter guess of -15px
+   only cancelled part of that and left a visible strip on both sides.
+   ========================================================================== */
+@media (max-width: 768px) {
+	.web-list-item,
+	.card {
+		border-radius: 0;
+		margin-left: -44px;
+		margin-right: -44px;
+		padding: 1rem 20px;
+	}
+}
+
+/* ==========================================================================
+   /me — structural exception
+   Does not use .web-sidebar or .web-list-item at all: it's a separate,
+   simpler template (frappe/www/me.html) with .portal-container /
+   .portal-section / .portal-footer, and its own inline <style> that
+   sets body { background-color: var(--subtle-fg) } — inline styles in
+   the page beat an external stylesheet's plain `body` rule above
+   regardless of load order, hence !important here specifically.
+   ========================================================================== */
+body:has(.portal-container) {
+	background-color: #f8fafc !important;
+}
+
+.portal-container .portal-section {
+	background-color: #ffffff;
+	border-radius: 16px;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+	margin-bottom: 1rem;
+}
+
+.my-account-item-link a:hover {
+	color: #8b5cf6;
+}
