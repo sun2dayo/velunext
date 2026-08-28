@@ -1,0 +1,811 @@
+/**
+ * VeluNext — modern Desk theme for ERPNext
+ *
+ * Copyright (c) 2026, NovaDX <ola@novadx.pt>
+ * Licensed under the MIT License.
+ *
+ * Sidebar + user profile styling, plus the global form/list/typography
+ * overrides further down this file (see the section banners below).
+ */
+
+:root {
+	--velunext-accent: #8b5cf6;
+	--velunext-accent-strong: #7c3aed;
+	--velunext-sidebar-bg: #ffffff;
+	--velunext-sidebar-text: #4b5563;
+	--velunext-sidebar-text-strong: #1f2937;
+	--velunext-sidebar-border: #e5e7eb;
+	--velunext-sidebar-hover: #f5f3ff;
+	--velunext-sidebar-active-bg: #ede9fe;
+	--velunext-sidebar-active-text: #7c3aed;
+	--velunext-panel-bg: #f8fafc;
+	--velunext-toggle-track: #8b5cf6;
+	--velunext-toggle-knob: #ffffff;
+	--velunext-radius: 10px;
+}
+
+[data-theme="dark"] {
+	--velunext-accent: #8b5cf6;
+	--velunext-accent-strong: #a78bfa;
+	--velunext-sidebar-bg: #15131c;
+	--velunext-sidebar-text: #cbd5e1;
+	--velunext-sidebar-text-strong: #f1f5f9;
+	--velunext-sidebar-border: rgba(255, 255, 255, 0.08);
+	--velunext-sidebar-hover: rgba(139, 92, 246, 0.12);
+	--velunext-sidebar-active-bg: rgba(139, 92, 246, 0.2);
+	--velunext-sidebar-active-text: #a78bfa;
+	--velunext-panel-bg: #1d1a27;
+	--velunext-toggle-track: #8b5cf6;
+	--velunext-toggle-knob: #ffffff;
+}
+
+/* Map onto Frappe's native sidebar variables, scoped to the sidebar only */
+.body-sidebar-container {
+	--sidebar-hover-color: var(--velunext-sidebar-hover);
+	--sidebar-active-color: var(--velunext-sidebar-active-bg);
+	--sidebar-border-color: var(--velunext-sidebar-border);
+	--divider-color: var(--velunext-sidebar-border);
+	--surface-menu-bar: var(--velunext-sidebar-bg);
+}
+
+.body-sidebar {
+	border-right: 1px solid var(--velunext-sidebar-border);
+}
+
+/* Sidebar header (app switcher) */
+.sidebar-header {
+	border-radius: var(--velunext-radius);
+}
+.sidebar-header:hover,
+.sidebar-header.hover {
+	background: var(--velunext-sidebar-hover);
+}
+.sidebar-header .header-title {
+	color: var(--velunext-sidebar-text-strong);
+	font-weight: 600;
+}
+
+/* Workspace icon at the top of the sidebar (.sidebar-header). Its
+   background-color is set inline to `var()` with no fallback (a bug in
+   Frappe core — header_stroke_color is never assigned), so it's always
+   transparent; the visible colour is the baked-blue SVG in .header-logo
+   img — same #0289F7 source and same hue-rotate fix as the Apps grid. */
+.sidebar-header .header-logo img {
+	filter: hue-rotate(50deg) saturate(0.95);
+}
+
+/* Menu items */
+.standard-sidebar-item {
+	border-radius: var(--velunext-radius);
+	margin-bottom: 3px;
+}
+
+.standard-sidebar-item .item-anchor {
+	border-radius: var(--velunext-radius);
+	color: var(--velunext-sidebar-text);
+}
+
+.standard-sidebar-item .item-anchor svg {
+	stroke-width: 1.5px;
+}
+
+.standard-sidebar-item:not(.active-sidebar):has(a:not(.section-break)):hover {
+	background: var(--velunext-sidebar-hover) !important;
+	border-radius: var(--velunext-radius);
+}
+
+.standard-sidebar-item.active-sidebar,
+.active-sidebar {
+	background: var(--velunext-sidebar-active-bg) !important;
+	border-radius: var(--velunext-radius);
+	box-shadow: none;
+}
+
+.standard-sidebar-item.active-sidebar .item-anchor,
+.active-sidebar .item-anchor {
+	color: var(--velunext-sidebar-active-text) !important;
+	font-weight: 600;
+}
+
+.standard-sidebar-item.active-sidebar .item-anchor svg,
+.active-sidebar .item-anchor svg {
+	stroke: var(--velunext-sidebar-active-text) !important;
+	color: var(--velunext-sidebar-active-text) !important;
+}
+
+.sidebar-item-label {
+	font-size: var(--text-sm);
+}
+
+.divider {
+	border-top: 1px solid var(--velunext-sidebar-border);
+}
+
+/* User profile block */
+.dropdown-navbar-user .sidebar-user-button {
+	border-radius: var(--velunext-radius);
+}
+
+.dropdown-navbar-user .sidebar-user-button:hover {
+	background: var(--velunext-sidebar-hover);
+}
+
+.dropdown-navbar-user .avatar,
+.dropdown-navbar-user .avatar-frame {
+	border-radius: 50% !important;
+	border: 2px solid var(--velunext-sidebar-border);
+}
+
+.avatar-name-email span:first-child {
+	color: var(--velunext-sidebar-text-strong);
+	font-weight: 600;
+}
+
+.avatar-name-email span:last-child {
+	color: var(--velunext-sidebar-text);
+}
+
+/* ==========================================================================
+   Theme toggle — injected by theme_toggle.js at the bottom of the sidebar.
+   Base rules below target the DEFAULT (collapsed, ~50px) sidebar state,
+   since .body-sidebar-container has no width modifier by default — Frappe
+   only adds ".expanded" on hover/pin (--sidebar-width, ~220px). The
+   ".expanded" block further down restyles it into the bigger pill-in-card
+   look once there is room. There are no text labels in this component, so
+   nothing needs to be hidden in the collapsed state — only re-sized.
+   ========================================================================== */
+.velunext-theme-toggle-panel {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 4px auto 10px auto;
+	transition: padding 0.15s ease, background-color 0.15s ease;
+}
+
+.velunext-theme-toggle {
+	position: relative;
+	border-radius: 999px;
+	background: var(--velunext-toggle-track);
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	display: block;
+	flex-shrink: 0;
+}
+
+.velunext-theme-toggle .velunext-toggle-knob {
+	position: absolute;
+	border-radius: 50%;
+	background: var(--velunext-toggle-knob);
+	color: var(--velunext-accent-strong);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: left 0.2s ease;
+}
+
+.velunext-theme-toggle .velunext-toggle-knob svg {
+	width: 60%;
+	height: 60%;
+}
+
+/* Collapsed sidebar (default): bare, minimal switch, no card/shadow so it
+   never overflows the ~34px content width (50px sidebar - 16px padding). */
+.body-sidebar-container:not(.expanded) .velunext-theme-toggle-panel {
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	padding: 0;
+	width: 100%;
+}
+
+.body-sidebar-container:not(.expanded) .velunext-theme-toggle {
+	width: 28px;
+	height: 16px;
+}
+
+.body-sidebar-container:not(.expanded) .velunext-theme-toggle .velunext-toggle-knob {
+	width: 12px;
+	height: 12px;
+	top: 2px;
+	left: 2px;
+}
+
+[data-theme="dark"] .body-sidebar-container:not(.expanded) .velunext-theme-toggle .velunext-toggle-knob {
+	left: 14px;
+}
+
+/* Expanded sidebar (pinned/hovered, ~220px): elevated pill-card, more room. */
+.body-sidebar-container.expanded .velunext-theme-toggle-panel {
+	background: var(--velunext-panel-bg);
+	border: 1px solid var(--velunext-sidebar-border);
+	border-radius: 999px;
+	padding: 5px;
+	width: fit-content;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.body-sidebar-container.expanded .velunext-theme-toggle {
+	width: 40px;
+	height: 22px;
+}
+
+.body-sidebar-container.expanded .velunext-theme-toggle .velunext-toggle-knob {
+	width: 18px;
+	height: 18px;
+	top: 2px;
+	left: 2px;
+}
+
+[data-theme="dark"] .body-sidebar-container.expanded .velunext-theme-toggle .velunext-toggle-knob {
+	left: 20px;
+}
+
+/* Mobile breakpoint: sidebar is fully hidden unless .expanded (overlay), so
+   only the expanded rules above apply — nothing extra needed here. */
+
+/* ==========================================================================
+   Icon colour — sidebar, then the whole Desk
+   Frappe's icon sprites (.icon/.es-icon) read color from the CSS custom
+   properties --icon-stroke / --icon-fill (see scss/common/icons.scss), so
+   the correct override point is those variables — not fighting
+   `stroke`/`fill` on every svg by hand.
+   Originally scoped to just the sidebar; extended on request to --root--
+   so every neutral system icon across the whole Desk (list view toolbar
+   — refresh, list-view switcher, sort direction, filter — plus per-row
+   comment/like icons, etc.) follows the same accent. This only affects
+   icons that fall back to this default: an icon explicitly coloured for
+   a reason (delete buttons, red/green status icons) sets its own colour
+   directly and is unaffected by this variable. */
+:root {
+	--icon-stroke: var(--velunext-accent);
+	--icon-fill: transparent;
+}
+
+[data-theme="dark"] {
+	--icon-stroke: var(--velunext-accent);
+}
+
+/* Sidebar icons specifically get bumped one shade further, to
+   --velunext-sidebar-active-text, matching the active item's icon
+   colour exactly (it's forced via a direct `stroke` override further
+   up this file — see .active-sidebar .item-anchor svg — which a
+   variable-only rule can't beat). Requested explicitly: every sidebar
+   icon should read as the same colour as the active one, not two
+   adjacent shades of purple. Scoped to the sidebar only, so the rest
+   of the Desk keeps the slightly lighter accent set above. */
+.body-sidebar-container {
+	--icon-stroke: var(--velunext-sidebar-active-text);
+}
+
+/* Most sidebar item icons render via a DIFFERENT mechanism that bypasses
+   --icon-stroke entirely: frappe.utils.icon() renders them with both a
+   ".text-ink-gray-7" class (sets `color`) AND a ".current-color" class
+   (icons.scss: `.current-color { stroke: currentColor; }`), so the
+   stroke tracks `color`, not the --icon-stroke variable — confirmed
+   live (computed stroke stayed neutral grey after the variable change
+   above). ".text-ink-gray-7" is a generic utility reused well beyond
+   the sidebar, so this is scoped tightly to sidebar icons rather than
+   overridden globally. */
+.body-sidebar-container .sidebar-item-icon.text-ink-gray-7,
+.body-sidebar-container svg.text-ink-gray-7 {
+	color: var(--velunext-sidebar-active-text) !important;
+}
+
+/* ==========================================================================
+   Form Sidebar (right-hand panel on a document: Assign/Attachments/
+   Tags/Share, "Last Edited By" section, etc.)
+   A THIRD icon mechanism, different from both cases above:
+   form_sidebar.scss sets `.form-sidebar-items .icon { stroke:
+   var(--text-light); }` directly — a literal property, not routed
+   through --icon-stroke at all, and specific enough (4 classes) that a
+   variable change is powerless against it regardless of where it's
+   set. Needs a matching direct override. The "+" buttons next to each
+   (Assign, Attachments, ...) already look right without any extra rule
+   here: they're `.es-icon`, not `.icon`, so that compound selector
+   never touched them in the first place.
+   ========================================================================== */
+.form-sidebar-items .icon {
+	stroke: var(--velunext-accent) !important;
+}
+
+/* ==========================================================================
+   Erradicação do "azul Frappe" nos ícones de Workspace/Apps
+   These big module/app icons come from two different code paths in Frappe
+   core (frappe/public/js/frappe/utils/utils.js#desktop_icon and
+   frappe/public/js/frappe/ui/app_icon.js), and BOTH set their color via an
+   *inline* style attribute (jQuery .css(), default palette "#0289F7") —
+   not a class or CSS variable. `!important` is required to beat inline
+   styles, and is the only way to reach them from an external stylesheet.
+   Caveat: module icons that ship their own dedicated SVG file
+   (assets/<app>/icons/desktop_icons/...) are loaded as <img>, with the
+   blue baked into the file itself — no CSS variable reaches inside an
+   <img>, so those can only be approximated with a hue-rotate filter, not
+   matched to the exact accent purple. Swapping those SVG assets is the
+   only way to get a pixel-exact match.
+   ========================================================================== */
+
+/* Fallback "letter" icon (no dedicated SVG for that module). This site runs
+   the "Solid" desktop icon style (solid colour block + white glyph), so we
+   match that: solid accent background, white letter. */
+.desktop-icon .icon-container {
+	background-color: var(--velunext-accent) !important;
+}
+
+.desktop-icon .icon-container .desktop-alphabet {
+	color: #ffffff !important;
+}
+
+/* Module icons with their own baked-blue SVG file. All of ERPNext's
+   "solid" desktop icons bake in the exact same blue, #0289F7 — measured
+   (via a canvas round-trip in the actual browser, not guessed) that
+   hue-rotate(50deg) saturate(0.95) maps #0289F7 to rgb(142,92,248),
+   ~3 units away from our #8B5CF6 accent (139,92,246). Recompute if
+   Frappe/ERPNext ever change that source blue. */
+.desktop-icon .icon-container img.app-icon {
+	filter: hue-rotate(50deg) saturate(0.95);
+}
+
+/* frappe.ui.app_icon (sidebar app-switcher dropdown, About dialog, etc.) —
+   also sets background-color inline from the Module Def's "color" field. */
+.app-icon {
+	background-color: var(--velunext-accent) !important;
+}
+
+/* Workspace-switcher dropdown (click the sidebar header) and its nested
+   folder submenus (e.g. Accounting > Invoicing/Payments/...). This is a
+   third, separate code path (frappe.ui.menu / add_menu_item), rendering
+   the same baked-blue module SVGs via <img class="logo">. */
+.frappe-menu-item-icon img.logo {
+	filter: hue-rotate(50deg) saturate(0.95);
+}
+
+/* "Framework" and "Frappe Framework" tiles are a special case within
+   the same icon family: frappe-framework-logo.svg bakes its own
+   rounded-square background directly into the file (fill="#7B808A", a
+   near-neutral grey — confirmed by reading the SVG source), so
+   hue-rotate does nothing to it (hue-rotate has no effect on a colour
+   with ~zero saturation, unlike the saturated blue used everywhere
+   else). A grayscale+sepia+hue-rotate filter chain *can* fake a tint
+   onto grey, but it inevitably tints the white cube glyph too (sepia
+   has no clean way to leave true white alone) — reported as looking
+   "washed with yellow" instead of a crisp white icon. Swapped for an
+   exact fix instead: a second copy of the same SVG with only the
+   background fill changed to the precise accent
+   (framework-icon-amber.svg — background-color #F59E0B, glyph left as
+   literal fill="white"), swapped in via `content: url()`, which
+   Chromium/Firefox support for replacing what an <img> renders without
+   touching its `src` attribute, the surrounding HTML, or any other
+   background/box styling on its container. Targeted by [src*=] so it
+   reaches this logo wherever it appears (Apps grid, sidebar header,
+   dropdown), not just one spot; !important for the same specificity
+   reason as before (the general 3-class blue-icon rule still matches
+   this element and would otherwise win the cascade). */
+img[src*="frappe-framework-logo"] {
+	content: url("/assets/velunext/images/framework-icon-amber.svg") !important;
+	filter: none !important;
+}
+
+/* ==========================================================================
+   Global primary colour
+   Frappe's own default action colour lives entirely in one variable,
+   --primary (see frappe/public/dist/css/desk.bundle.*.css — it resolves
+   to a static #171717, a near-black; it is not defined anywhere in the
+   scss source, so it must be baked in at build time). It drives, among
+   other things, .btn-primary backgrounds and the custom checkbox
+   checked-state colour (element/checkbox.scss: --checkbox-gradient,
+   which itself is `linear-gradient(var(--primary), var(--primary))`).
+   Overriding it once here is what makes primary buttons AND checked
+   checkboxes (section 4 below) purple, without touching either
+   component directly.
+   ========================================================================== */
+:root {
+	--primary: var(--velunext-accent);
+}
+
+[data-theme="dark"] {
+	--primary: var(--velunext-accent);
+}
+
+/* .btn-primary itself does NOT read --primary at runtime: Bootstrap
+   bakes its background/border/box-shadow into literal hex values at
+   Sass-compile time (see the shipped desk.bundle.*.css — .btn-primary,
+   :hover, :focus and :active are all hardcoded, e.g. #171717/#040404/
+   #000), so the variable override above never reaches it. Re-stated
+   directly here — this is what actually makes primary action buttons
+   (Save, "+ Add ...") match the rest of the theme instead of staying
+   black, covering the "action buttons" part of the Indicators section
+   below as well. */
+.btn-primary {
+	background-color: var(--velunext-accent) !important;
+	border-color: var(--velunext-accent) !important;
+}
+
+.btn-primary:hover {
+	background-color: var(--velunext-accent-strong) !important;
+	border-color: var(--velunext-accent-strong) !important;
+}
+
+.btn-primary:focus,
+.btn-primary.focus {
+	background-color: var(--velunext-accent-strong) !important;
+	border-color: var(--velunext-accent-strong) !important;
+	box-shadow: inset 0 1px #ffffff26, 0 1px 1px #00000013, 0 0 0 2px rgba(139, 92, 246, 0.4) !important;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active {
+	background-color: #6d28d9 !important;
+	border-color: #6d28d9 !important;
+}
+
+/* ==========================================================================
+   Inputs & Forms
+   .form-control's own rule only sets border:none (see
+   scss/common/form.scss); the grey background and box-shadow the user
+   sees come from Bootstrap's base .form-control rule further up the
+   cascade (background-color: var(--control-bg), a hard grey), and its
+   :focus ring is a hardcoded `0 0 0 2px #7c7c7c40` — not backed by a
+   variable at all, so it needs a direct !important override. This also
+   covers the awesomplete/link-field inputs and list-view filter boxes,
+   since they all render as the same <input class="form-control">.
+   ========================================================================== */
+:root {
+	--control-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+	--control-bg: var(--velunext-sidebar-bg);
+}
+
+.form-control {
+	border: 1px solid var(--velunext-sidebar-border);
+	box-shadow: none;
+}
+
+.form-control:focus {
+	border-color: var(--velunext-accent) !important;
+	box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.25) !important;
+}
+
+/* ==========================================================================
+   Typography
+   Recolouring every .control-label would tint every field label on
+   every form, all the time — that hurts readability rather than
+   helping it, so it is deliberately left alone. Scoped instead to
+   genuine emphasis markup, which is what "make bold text pop" actually
+   means in practice: literal <strong>/<b> tags and Frappe/Bootstrap's
+   bold utility classes.
+   ========================================================================== */
+strong,
+b,
+.text-bold,
+.font-bold,
+.font-weight-bold {
+	color: var(--velunext-accent);
+}
+
+/* ==========================================================================
+   List Views & Checkboxes
+   Custom checkboxes (element/checkbox.scss) already read their checked
+   background from --primary, overridden above, so no direct override is
+   needed here — this just adds accent-color as a safety net for any
+   native, non-custom-styled checkbox elsewhere (dialogs, etc.), which
+   accent-color affects; it is a no-op on Frappe's own appearance:none
+   checkboxes, so it cannot conflict with them.
+   Frappe does not ship a "selected row" background at all in this
+   version — no .list-row(-container).selected class exists to
+   override — so this adds one from scratch with :has(), which this
+   Frappe version already relies on elsewhere (desk/list.scss).
+   ========================================================================== */
+input[type="checkbox"] {
+	accent-color: var(--velunext-accent);
+}
+
+/* Disabled checkboxes (read-only fields) are a SEPARATE branch in
+   checkbox.scss with their own hardcoded colours — background-color:
+   var(--gray-600) when checked, var(--disabled-control-bg) when not —
+   neither of which falls back to --primary, so they were left out of
+   the override above. Tinted rather than fully solid, to keep the
+   "disabled" meaning visible instead of looking identical to an
+   editable, checked box. */
+input[type="checkbox"].disabled-selected,
+input[type="checkbox"]:disabled:checked {
+	background-color: rgba(139, 92, 246, 0.5) !important;
+}
+
+/* Unchecked+disabled is intentionally left at Frappe's own default look
+   (border + inset shadow from checkbox.scss) — tinting its background
+   here too flattened that border/shadow away, leaving a washed-out box
+   with no visible edge instead of a normal-looking disabled checkbox. */
+
+.list-row-container:has(.list-row-checkbox:checked) {
+	background-color: rgba(139, 92, 246, 0.08);
+}
+
+[data-theme="dark"] .list-row-container:has(.list-row-checkbox:checked) {
+	background-color: rgba(139, 92, 246, 0.16);
+}
+
+/* ==========================================================================
+   Indicators
+   .indicator-pill.blue (used by default/neutral statuses such as
+   "Enabled") reads its colours from --bg-blue / --text-on-blue
+   (scss/common/indicator.scss's $indicator-colors loop) — remapping
+   those two variables recolours every blue indicator pill AND dot
+   across the whole Desk in one place, rather than fighting the
+   .indicator-pill.blue selector directly. Other status colours (green,
+   red, orange, ...) are semantic and are intentionally left untouched.
+   ========================================================================== */
+:root {
+	--bg-blue: #ede9fe;
+	--text-on-blue: var(--velunext-accent-strong);
+}
+
+[data-theme="dark"] {
+	--bg-blue: rgba(139, 92, 246, 0.18);
+	--text-on-blue: #a78bfa;
+}
+
+/* ==========================================================================
+   Grid / Child Table Headers
+   The column header bar of every child table (Items, Sales Taxes and
+   Charges, and every other grid in the Desk — they all share this one
+   component, common/grid.scss) is .grid-heading-row, coloured via
+   --gray-600 text over a --subtle-fg background. --subtle-fg itself is
+   reused well beyond grids (list view, form sidebar, global search), so
+   it's overridden locally instead of globally, to avoid recolouring all
+   of those unrelated surfaces too.
+   Painting the background on .grid-row alone wasn't enough: each cell
+   (.grid-static-col, plus the checkbox/row-number columns .row-check
+   and .row-index) paints its own OPAQUE background-color: var(--subtle-fg)
+   on top of it, per grid.scss line ~65 — leaving only the thin gaps
+   between cells showing our tint, which is the "patchy, not proportional"
+   look reported. Fixed by tinting those cells directly instead, scoped
+   to .grid-heading-row so the same classes on ordinary data rows (e.g.
+   read-only columns) are left untouched. */
+.grid-heading-row {
+	color: var(--velunext-accent-strong);
+	font-weight: 600;
+	border-bottom: 1px solid var(--velunext-sidebar-border);
+}
+
+.grid-heading-row .grid-row,
+.grid-heading-row .grid-static-col,
+.grid-heading-row .row-check,
+.grid-heading-row .row-index {
+	background-color: var(--velunext-sidebar-hover);
+}
+
+/* ==========================================================================
+   List View Column Header
+   The equivalent header bar for list views (Customer, Sales Order, ...)
+   is a different component from the grid above — .list-row-head — but
+   gets the same treatment for consistency. Unlike the grid, its column
+   cells (.list-row-col) are transparent rather than each painting their
+   own opaque background, so a single rule on the header itself is
+   enough here; no cell-level fix needed.
+   ========================================================================== */
+.list-row-head {
+	background-color: var(--velunext-sidebar-hover);
+	color: var(--velunext-accent-strong);
+	font-weight: 600;
+}
+
+/* The right-hand group (result count + "liked by me" heart) is a
+   separate element, .level-right, that paints its own opaque
+   background on top of the header — the same layering issue as the
+   grid cells above, just with one element instead of many. */
+.list-row-head .level-right {
+	background-color: var(--velunext-sidebar-hover);
+}
+
+/* ==========================================================================
+   "Getting Started" onboarding widget (.user-onboarding)
+   Same baked-blue module icon as the Apps grid / sidebar header / menu
+   dropdowns (a fourth spot using this Frappe/ERPNext icon system —
+   assets/<app>/icons/desktop_icons/... — <img>, colour baked into the
+   file), same calibrated filter. The module title next to it
+   (.onb-title, e.g. "Selling Setup") uses .font-medium, which our
+   typography rule above does not touch (that only targets bold/strong
+   text, and this is a medium weight, not bold) — coloured directly here
+   instead. Scoped to .onb-title so the dialog's own generic "Getting
+   Started" header caption (which reuses the same .text-base.font-medium
+   utility classes) is left alone.
+   ========================================================================== */
+.onb-title-icon img {
+	filter: hue-rotate(50deg) saturate(0.95);
+}
+
+.onb-title .text-base.font-medium {
+	color: var(--velunext-accent-strong);
+}
+
+/* ==========================================================================
+   Dashboards & Charts
+   Two very different colour mechanisms are at play here, discovered by
+   reading node_modules/frappe-charts and checking rendered SVG output
+   live rather than assuming either way:
+
+   1. Chart CHROME (axis labels, gridlines, tooltip, legend) is properly
+      themeable: frappe-charts.min.css defines it entirely through its
+      own CSS custom properties (--charts-label-color,
+      --charts-axis-line-color, --charts-tooltip-*, --charts-legend-*).
+      Remapping those is the correct, intended way to theme it.
+
+   2. Chart SERIES colour (the line stroke, the region fill under it,
+      bar fill) is NOT themeable that way: frappe-charts picks from a
+      hardcoded hex palette baked into its own JS bundle and writes it
+      straight into each SVG element's `style` attribute at render time
+      (confirmed on a live chart: style="stroke: rgb(246,131,174)...").
+      A stylesheet rule CAN still beat a plain (non-!important) inline
+      style, so --important-- overrides on .line-graph-path / .bar work
+      reliably for the crisp line/bar colour itself. The soft area-fill
+      under a line is a different story: it references a per-colour
+      generated SVG <linearGradient id="path-fill-gradient-#F683AE-...">
+      that lives elsewhere in the DOM — there is no stable id to point a
+      static override at, so instead of a wrong/mismatched gradient it
+      is simply turned off in favour of a plain crisp line, which reads
+      as more modern anyway.
+
+   Two coordinated accent colours are used for series instead of a
+   single flat purple everywhere, since every dashboard chart here
+   happens to be single-series (recolouring a genuinely multi-series
+   chart this way would make its series indistinguishable) — line
+   charts in the theme purple, bar charts in a warm amber that pairs
+   with it, so a dashboard full of cards still reads as one coordinated
+   palette rather than a wall of identical purple.
+   ========================================================================== */
+:root {
+	--velunext-chart-bar: #f59e0b;
+}
+
+.chart-container {
+	--charts-label-color: var(--velunext-sidebar-text);
+	--charts-axis-line-color: var(--velunext-sidebar-border);
+	--charts-tooltip-bg: var(--velunext-panel-bg);
+	--charts-tooltip-title: var(--velunext-sidebar-text);
+	--charts-tooltip-value: var(--velunext-sidebar-text-strong);
+	--charts-legend-label: var(--velunext-sidebar-text);
+	--charts-legend-value: var(--velunext-sidebar-text-strong);
+}
+
+.chart-container .line-graph-path,
+.chart-container .path-group path {
+	stroke: var(--velunext-accent) !important;
+}
+
+/* Tooltip legend swatch (the small square next to the value on hover)
+   is ALSO an inline style, same as the series colours above — and,
+   confirmed live, the tooltip is rendered as a child of .chart-container
+   itself, so the --charts-tooltip-* variables above already reach it
+   correctly. The swatch is pinned to the theme purple regardless of
+   whether the point being hovered is a line or a bar series — there is
+   no selector available to tell which series colour a given tooltip
+   instance belongs to (both use the exact same .tooltip-legend markup),
+   so an exact per-series match isn't possible here; a single consistent
+   accent swatch reads as intentional rather than a mismatched leftover
+   pink, which is the actual complaint this fixes. */
+.chart-container .tooltip-legend {
+	background: var(--velunext-accent) !important;
+}
+
+.chart-container .region-fill {
+	fill: none !important;
+}
+
+.chart-container .bar {
+	fill: var(--velunext-chart-bar) !important;
+}
+
+/* Dashboard cards (number KPIs + chart widgets share the same .widget
+   wrapper) — a calmer border and a purple-tinted heading tie each card
+   back to the sidebar/grid styling above instead of Frappe's default
+   plain grey/black. */
+.widget.number-widget-box,
+.widget.dashboard-widget-box {
+	border: 1px solid var(--velunext-sidebar-border);
+}
+
+.widget .widget-head .widget-label .widget-title {
+	/* Frappe nests this 3 levels deep (.widget-head .widget-label
+	   .widget-title), which otherwise beats a plain .widget .widget-title
+	   rule on specificity alone regardless of source order. */
+	color: var(--velunext-accent-strong) !important;
+}
+
+.number-widget-box .widget-body .number {
+	color: var(--velunext-sidebar-text-strong);
+}
+
+/* ==========================================================================
+   Boot splash screen (the blue logo shown for a couple seconds on
+   /desk while it loads — after login, and on a hard refresh of the
+   Desk)
+   templates/includes/splash_screen.html renders <div class="centered
+   splash"><img src="/assets/erpnext/images/erpnext-logo.svg">
+   (confirmed by fetching desk.html's own server-rendered source) —
+   the exact same external SVG <img> as the login page logo, so `fill`
+   can't reach it for the same reason: it never becomes part of this
+   page's DOM. Reused the exact filter already calibrated for that
+   logo (see modern_login.scss) rather than recalculating it, since
+   it's the same source file and the same target amber.
+   ========================================================================== */
+.splash img {
+	filter: hue-rotate(-158deg) saturate(1.6) brightness(1.4);
+}
+
+/* ==========================================================================
+   Micro-interactions & global consistency polish
+   Four small, independent tweaks — each verified against the real
+   class/markup before writing it, same as everywhere else in this file.
+   ========================================================================== */
+
+/* 1) Workspace shortcut cards — .shortcut-widget-box is real (desk/
+   desktop.scss), already has a border and its own hover state
+   (border-color: var(--invert-neutral)); this adds a lift + soft
+   shadow on top of that, it doesn't replace it. */
+.shortcut-widget-box {
+	transition: all 0.2s ease;
+}
+
+.shortcut-widget-box:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* 2) Navbar search. The visible "Search" control in the navbar is a
+   *button* that opens a modal containing the real input, #navbar-search
+   (confirmed live — there is no always-on input to style directly).
+   It already carries .form-control, so it inherits the Inputs & Forms
+   rules above (clean border, purple focus ring); this layers the
+   pill shape and idle grey fill requested, overriding the .bg-transparent
+   utility class Frappe puts on it (same specificity, one class each,
+   so !important keeps this from depending on source order). */
+#navbar-search {
+	background-color: #f3f4f6 !important;
+	border-radius: 20px !important;
+}
+
+#navbar-search:focus {
+	background-color: #ffffff !important;
+}
+
+/* 3) Avatar initials background. .avatar-frame.standard-image sets its
+   background/text colour inline per-user (style="background-color:
+   var(--dark-green-avatar-bg); ..."), confirmed live — needs !important
+   to beat that inline style. Text stays white for contrast against the
+   solid accent, same as every other avatar variant in this theme. */
+.avatar-frame.standard-image {
+	background-color: var(--velunext-accent) !important;
+	color: #ffffff !important;
+}
+
+/* 4) Scrollbar. Frappe already ships a complete custom scrollbar
+   (desk/scrollbar.scss) driven entirely by two variables —
+   --scrollbar-thumb-color / --scrollbar-track-color — with its own
+   *::-webkit-scrollbar-thumb/-track rules already in place, so
+   redeclaring those pseudo-elements from scratch would just be
+   fighting an equally-specific universal selector for no reason.
+   Remapping the two variables is the correct, intended extension
+   point. The thumb turning accent-purple on hover only needs
+   *:hover::-webkit-scrollbar-thumb — hovering anywhere over a
+   scrollable element (including its own scrollbar) triggers :hover
+   on that element in WebKit/Blink. */
+:root {
+	--scrollbar-thumb-color: #d1d5db;
+	--scrollbar-track-color: transparent;
+}
+
+[data-theme="dark"] {
+	--scrollbar-thumb-color: #4b5563;
+	--scrollbar-track-color: transparent;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+	background: var(--velunext-accent);
+}
+
+*:not(#page-form-builder *)::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}

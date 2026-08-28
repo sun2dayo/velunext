@@ -21,3 +21,6 @@ Thumbs.db
 
 # Env
 .env
+
+# Chat session backups (dados sensíveis, não commitar)
+_chat_backup/
