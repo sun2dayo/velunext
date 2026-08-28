@@ -76,6 +76,21 @@ body {
 
 .web-sidebar .sidebar-item a .icon {
 	flex-shrink: 0;
+	/* Root cause of the icon/text misalignment reported live: the
+	   native base rule for .icon (scss/common/icons.scss) sets
+	   `margin: 0 auto` — meant to horizontally centre an icon within a
+	   fixed-width, non-flex box elsewhere in Frappe. Inside OUR flex
+	   container, `auto` margins on a flex item absorb any leftover
+	   free space on the main axis instead: the shorter a label is
+	   relative to the row's width, the more free space there is to
+	   distribute, so short labels ("Projetos") pushed their icon much
+	   further right than long ones ("Faturas de Compra", which nearly
+	   fills the row and so had ~0 free space to distribute) — same box,
+	   same CSS, purely a function of each label's text length. Measured
+	   live: overriding this one property took the icon offset from a
+	   label-dependent 16–47px down to a flat, correct 16px for every
+	   item. */
+	margin: 0;
 }
 
 /* The website bundle (different from the Desk theme's icons.scss) adds
@@ -144,6 +159,15 @@ body {
 	border-radius: 8px;
 	transition: all 0.2s ease;
 	color: #4b5563 !important;
+}
+
+.d-block.d-lg-none .nav-item a.nav-link .icon {
+	/* Same fix as .web-sidebar's icon above, and the same reason:
+	   the native .icon rule's `margin: 0 auto` absorbs this flex row's
+	   leftover space, shifting the icon right by an amount that
+	   depends on how short the label is — not fixed here too. */
+	flex-shrink: 0;
+	margin: 0;
 }
 
 .d-block.d-lg-none .nav-item a.nav-link .icon use {
