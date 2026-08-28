@@ -120,6 +120,55 @@ body {
 	background-color: var(--primary-light) !important;
 }
 
+/* 2b) Mobile nav duplicate of the sidebar
+   .web-sidebar is display:none below the lg breakpoint (it lives
+   inside .sidebar-column, which templates/web.html's own sidebar()
+   macro hides on mobile) — confirmed live by measuring it directly
+   (display:none, 0×0 rect) with the mobile menu visibly open at the
+   same time. What's actually visible in the collapsed mobile nav is a
+   SEPARATE render of the same sidebar_items list, from
+   frappe/templates/includes/navbar/navbar_items.html: `{% if
+   show_sidebar and sidebar_items %}<div class="d-block
+   d-lg-none">...<a class="nav-link {{ 'text-dark' if active else
+   'text-muted' }}">`. Different template, different classes (.nav-item
+   /.nav-link, active via .text-dark not .active) — none of the rules
+   above reach it, hence a full parallel set here rather than trying to
+   unify the selectors. modern_portal_icons.js injects icons into both
+   structures already. */
+.d-block.d-lg-none .nav-item a.nav-link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 16px;
+	font-weight: 500;
+	border-radius: 8px;
+	transition: all 0.2s ease;
+	color: #4b5563 !important;
+}
+
+.d-block.d-lg-none .nav-item a.nav-link .icon use {
+	stroke: #4b5563;
+}
+
+.d-block.d-lg-none .nav-item a.nav-link:hover:not(.text-dark) {
+	background-color: #f3f4f6;
+	color: #1f2937 !important;
+}
+
+.d-block.d-lg-none .nav-item a.nav-link:hover:not(.text-dark) .icon use {
+	stroke: #1f2937;
+}
+
+.d-block.d-lg-none .nav-item a.nav-link.text-dark {
+	font-weight: 600;
+	color: var(--primary) !important;
+	background-color: var(--primary-light);
+}
+
+.d-block.d-lg-none .nav-item a.nav-link.text-dark .icon use {
+	stroke: #8b5cf6;
+}
+
 /* ==========================================================================
    3) Content cards & listings (.web-list-item)
    There is no .card in these native list pages — .web-list-item is the

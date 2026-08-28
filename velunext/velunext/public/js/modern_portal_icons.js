@@ -51,8 +51,24 @@
 		return ROUTE_ICONS[pathname] || DEFAULT_ICON;
 	}
 
+	// .web-sidebar .sidebar-item a is the desktop sidebar
+	// (templates/includes/web_sidebar.html, inside .sidebar-column,
+	// which is display:none on mobile — confirmed live).
+	// .d-block.d-lg-none .nav-item a.nav-link is a SEPARATE, THIRD
+	// render of the exact same sidebar_items list, specifically for the
+	// collapsed mobile nav (templates/includes/navbar/navbar_items.html:
+	// `{% if show_sidebar and sidebar_items %}<div class="d-block
+	// d-lg-none">...<a class="nav-link ...">`) — a different template
+	// entirely, using Bootstrap's own nav classes instead of
+	// .sidebar-item/.web-sidebar. Confirmed live: without this second
+	// selector, icons only ever appeared on desktop; the mobile menu
+	// (which is what's actually visible below the lg breakpoint) had
+	// none at all, because this script never even queried it.
+	const SIDEBAR_LINK_SELECTOR =
+		".web-sidebar .sidebar-item a, .d-block.d-lg-none .nav-item a.nav-link";
+
 	function add_sidebar_icons() {
-		document.querySelectorAll(".web-sidebar .sidebar-item a").forEach((link) => {
+		document.querySelectorAll(SIDEBAR_LINK_SELECTOR).forEach((link) => {
 			const href = link.getAttribute("href");
 			if (!href || link.querySelector(".icon")) return;
 			const icon_id = icon_id_for(href);
@@ -64,7 +80,7 @@
 	}
 
 	function init() {
-		if (!document.querySelector(".web-sidebar")) return;
+		if (!document.querySelector(SIDEBAR_LINK_SELECTOR)) return;
 		add_sidebar_icons();
 	}
 
