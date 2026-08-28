@@ -37,6 +37,14 @@ body {
    both variables here is enough on its own; no need to hand-write the
    active-state rule. Only the plain/hover states (hardcoded colours,
    not variables) need explicit overrides.
+
+   Icon colour: the injected <svg class="icon icon-md"> (see
+   modern_portal.js) is coloured the same way as every other icon in
+   this theme — through the --icon-stroke/--icon-fill custom properties
+   .icon reads (scss/common/icons.scss), NOT `color`/`currentColor` —
+   confirmed against the exact same component used throughout the Desk
+   theme, so scoped variable overrides per state here, not a `svg { fill
+   }` guess.
    ========================================================================== */
 :root {
 	--primary: #8b5cf6;
@@ -57,9 +65,43 @@ body {
 	color: #4b5563;
 }
 
+.web-sidebar .sidebar-item a {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 16px;
+	font-weight: 500;
+	transition: all 0.2s ease;
+}
+
+.web-sidebar .sidebar-item a .icon {
+	flex-shrink: 0;
+}
+
+/* The website bundle (different from the Desk theme's icons.scss) adds
+   an extra rule targeting the <use> element directly —
+   ".icon use { stroke: var(--text-muted) }" — which, being more
+   specific than .icon's own "stroke: var(--icon-stroke)", wins
+   regardless of what --icon-stroke is set to. Confirmed live: both the
+   default and active icons rendered in the same neutral grey despite
+   --icon-stroke being correctly set to different values on each.
+   Targeting the <use> directly (well beyond that rule's specificity)
+   is the only way to actually reach it. */
+.web-sidebar .sidebar-item a:not(.active) .icon use {
+	stroke: #4b5563;
+}
+
 .web-sidebar .sidebar-item a:hover:not(.active) {
 	color: #1f2937 !important;
 	background-color: #f3f4f6;
+}
+
+.web-sidebar .sidebar-item a:hover:not(.active) .icon use {
+	stroke: #1f2937;
+}
+
+.web-sidebar .sidebar-item a.active .icon use {
+	stroke: #8b5cf6;
 }
 
 .web-sidebar .sidebar-item a.active {
@@ -70,6 +112,7 @@ body {
 	   to a sibling rule, regardless of stylesheet order. */
 	color: var(--primary) !important;
 	background-color: var(--primary-light) !important;
+	--icon-stroke: #8b5cf6;
 }
 
 .web-sidebar .sidebar-item a.active:hover {
