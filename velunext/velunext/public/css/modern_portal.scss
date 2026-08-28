@@ -97,13 +97,20 @@ body {
    an extra rule targeting the <use> element directly —
    ".icon use { stroke: var(--text-muted) }" — which, being more
    specific than .icon's own "stroke: var(--icon-stroke)", wins
-   regardless of what --icon-stroke is set to. Confirmed live: both the
-   default and active icons rendered in the same neutral grey despite
-   --icon-stroke being correctly set to different values on each.
-   Targeting the <use> directly (well beyond that rule's specificity)
-   is the only way to actually reach it. */
+   regardless of what --icon-stroke is set to. Targeting the <use>
+   directly (well beyond that rule's specificity) is the only way to
+   actually reach it.
+
+   All icons purple by design (matching the Desk sidebar reference,
+   which uses --icon-stroke: var(--velunext-accent) as its DEFAULT for
+   every item, not just the active one): the row's TEXT stays neutral
+   grey/dark for inactive items — only the active row gets purple text
+   + a light-purple pill background — but the ICON itself is purple on
+   every row. Default #8b5cf6, hover/active bumped one shade darker to
+   #7c3aed, mirroring the Desk theme's --velunext-accent /
+   --velunext-sidebar-active-text pair exactly. */
 .web-sidebar .sidebar-item a:not(.active) .icon use {
-	stroke: #4b5563;
+	stroke: #8b5cf6;
 }
 
 .web-sidebar .sidebar-item a:hover:not(.active) {
@@ -112,11 +119,11 @@ body {
 }
 
 .web-sidebar .sidebar-item a:hover:not(.active) .icon use {
-	stroke: #1f2937;
+	stroke: #7c3aed;
 }
 
 .web-sidebar .sidebar-item a.active .icon use {
-	stroke: #8b5cf6;
+	stroke: #7c3aed;
 }
 
 .web-sidebar .sidebar-item a.active {
@@ -171,7 +178,9 @@ body {
 }
 
 .d-block.d-lg-none .nav-item a.nav-link .icon use {
-	stroke: #4b5563;
+	/* Same "all icons purple by default, text stays neutral" rule as
+	   the desktop sidebar above. */
+	stroke: #8b5cf6;
 }
 
 .d-block.d-lg-none .nav-item a.nav-link:hover:not(.text-dark) {
@@ -180,7 +189,7 @@ body {
 }
 
 .d-block.d-lg-none .nav-item a.nav-link:hover:not(.text-dark) .icon use {
-	stroke: #1f2937;
+	stroke: #7c3aed;
 }
 
 .d-block.d-lg-none .nav-item a.nav-link.text-dark {
@@ -190,7 +199,7 @@ body {
 }
 
 .d-block.d-lg-none .nav-item a.nav-link.text-dark .icon use {
-	stroke: #8b5cf6;
+	stroke: #7c3aed;
 }
 
 /* ==========================================================================
@@ -267,6 +276,145 @@ body {
 		margin-right: -44px;
 		padding: 1rem 20px;
 	}
+}
+
+/* ==========================================================================
+   6) New / Edit web-form pages (/issues/new, and any other portal
+   doctype's create/edit page — /addresses/new, etc. — they all share
+   this exact template)
+   Confirmed live: .web-form-container > .breadcrumb-container,
+   .web-form-header, .web-form (frappe/public/js/frappe/form/web_form
+   rendering), with the real field grid inside .form-page >
+   .form-section.visible-section > .form-group (.control-label +
+   .control-input, itself wrapping the actual <input>/<select>/<textarea
+   class="form-control">). None of this overlaps with .web-list-item or
+   .card from section 3 — it's a completely different component with
+   its own native class names, not reused. .submit-btn already inherits
+   the .btn-primary purple styling from section 4 with no extra rule
+   needed here (confirmed: it carries the btn-primary class natively).
+   ========================================================================== */
+.form-page {
+	background-color: #ffffff;
+	border: none;
+	border-radius: 16px;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+	padding: 1.5rem;
+}
+
+.web-form-title {
+	font-weight: 700;
+	color: #1f2937;
+}
+
+.control-label {
+	font-weight: 500;
+	color: #4b5563;
+}
+
+/* !important needed after all (checked live via document.styleSheets,
+   not assumed): core ships a much deeper compound selector —
+   `[data-doctype="Web Form"] .page-content-wrapper .container
+   .page_content .web-form .web-form-wrapper .form-control` (8 levels)
+   — that beats a plain `.form-page .form-control` on specificity alone
+   regardless of load order, and is what was actually forcing
+   `border-style: none` / the flat grey `--control-bg` background here. */
+.form-page .form-control {
+	background-color: #f9fafb !important;
+	border: 1px solid #e5e7eb !important;
+	border-radius: 8px !important;
+	box-shadow: none !important;
+	transition: all 0.2s ease;
+}
+
+.form-page .form-control:focus {
+	outline: none;
+	border-color: #8b5cf6 !important;
+	background-color: #ffffff !important;
+	box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25) !important;
+}
+
+/* Quill (the "Descrição" rich text field) ships its own toolbar/editor
+   chrome, not a .form-control at all — styled separately so it reads
+   as one continuous control rather than a plain grey default box
+   welded to the purple-bordered fields above it. */
+.form-page .ql-toolbar.ql-snow {
+	background-color: #f9fafb;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px 8px 0 0;
+}
+
+.form-page .ql-container.ql-snow {
+	border: 1px solid #e5e7eb;
+	border-top: none;
+	border-radius: 0 0 8px 8px;
+}
+
+/* .discard-btn / .btn-attach: secondary actions, styled as a neutral
+   outline pair so they read as clearly lower-priority than the purple
+   .submit-btn beside them, not as competing calls to action. */
+.right-area .discard-btn,
+.right-area .btn-attach {
+	background-color: transparent;
+	color: #4b5563;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	transition: all 0.2s ease;
+}
+
+.right-area .discard-btn:hover,
+.right-area .btn-attach:hover {
+	background-color: #f3f4f6;
+	color: #1f2937;
+}
+
+/* ==========================================================================
+   7) NovaDX footer credit
+   Appended (by modern_portal_icons.js) as the last child of
+   <main class="container"> — confirmed live to be the one wrapper
+   present on every portal route tested (list pages, /me, /issues/new).
+   The native <footer class="web-footer"> was tried first but is NOT
+   universal: present on the web-form template (/issues/new) but
+   entirely absent from portal list pages (/orders, etc.), so it
+   couldn't be relied on as a single anchor. JS scopes population to
+   portal pages only (sidebar/portal-container/web-form present) — this
+   stylesheet loads on website pages generally, so that page-content
+   check still has to happen in JS to keep the credit from appearing on
+   some future unrelated public/marketing page. A top border + margin
+   here (unlike the login page's variant) exist specifically because
+   this sits directly below ordinary page content (cards, forms) rather
+   than inside its own always-empty element — without them it would
+   read as an accidental extra row, not a deliberate footer. Same
+   visual design as .novadx-login-footer (modern_login.scss), duplicated
+   rather than shared across files since the two components live in
+   structurally unrelated parents (.login-content card vs a bare
+   <main>).
+   ========================================================================== */
+.novadx-portal-footer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	margin-top: 24px;
+	padding: 16px 0;
+	border-top: 1px solid #e5e7eb;
+	font-size: 12px;
+	color: #6b7280;
+}
+
+.novadx-portal-footer img {
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+}
+
+.novadx-portal-footer a {
+	color: #6b7280;
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.novadx-portal-footer a:hover {
+	color: #8b5cf6;
 }
 
 /* ==========================================================================

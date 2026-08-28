@@ -79,7 +79,54 @@
 		});
 	}
 
+	// "Powered by NovaDX" footer credit — same visual component as the
+	// login page's (see modern_login_branding.js /
+	// .novadx-login-footer). First attempt appended into the native
+	// <footer class="web-footer"> (templates/web.html), but that
+	// element turned out NOT to be universal: confirmed live it's
+	// present on /issues/new (the web-form template) but entirely
+	// absent on /orders and other portal list pages — different base
+	// template, no footer markup at all. <main class="container">, by
+	// contrast, was confirmed present on every portal route tested
+	// (list pages, /me, /issues/new), so the credit is appended there
+	// instead, directly after whatever content each page already
+	// rendered. Guarded to portal pages only — any of the three real
+	// portal-context markers confirmed live in this file and
+	// modern_portal.scss: .sidebar-column (desktop/mobile sidebar list
+	// pages), .portal-container (/me), .web-form-container (/issues/new
+	// and other create/edit forms) — so it never appears on an
+	// unrelated public page that happens to share the same <main>.
+	const PORTAL_CONTEXT_SELECTOR =
+		".sidebar-column, .portal-container, .web-form-container";
+	const LOGO_URL = "/assets/velunext/images/X_Overlay.png";
+
+	function add_portal_footer() {
+		if (!document.querySelector(PORTAL_CONTEXT_SELECTOR)) return;
+		const main = document.querySelector("main.container");
+		if (!main || main.querySelector(".novadx-portal-footer")) return;
+
+		const credit = document.createElement("div");
+		credit.className = "novadx-portal-footer";
+
+		const img = document.createElement("img");
+		img.src = LOGO_URL;
+		img.alt = "NovaDX";
+		img.width = 16;
+		img.height = 16;
+
+		const link = document.createElement("a");
+		link.href = "https://novadx.pt";
+		link.target = "_blank";
+		link.rel = "noopener";
+		link.textContent = "Powered by NovaDX";
+
+		credit.appendChild(img);
+		credit.appendChild(link);
+		main.appendChild(credit);
+	}
+
 	function init() {
+		add_portal_footer();
 		if (!document.querySelector(SIDEBAR_LINK_SELECTOR)) return;
 		add_sidebar_icons();
 	}
