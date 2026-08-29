@@ -8,20 +8,28 @@
 // the purple glyph with no background, and reveal the coloured square
 // only on hover (see modern_desk_sidebar.scss for the hover flip).
 //
-// ERPNext's own module icons (assets/erpnext/icons/desktop_icons/
-// solid/*.svg) bake the coloured square AND the white glyph into a
-// single flat image — a CSS filter on the <img> can only recolour the
-// whole flat image at once (confirmed: that's what the pre-existing
-// hue-rotate filter already did), it can't strip just one shape and
-// keep the other. So the actual pixels have to come from a different
-// file: modern_desk_sidebar.scss's own image folder ships a
-// background-stripped, pre-recoloured copy of each of the 22 solid
-// icons (generated once from the original files — same filenames, so
-// a plain basename swap below is all that's needed). Anything NOT in
-// that set (a future ERPNext icon, or another installed app's own
-// module icon) is left completely alone rather than guessed at.
+// Both ERPNext's AND Frappe core's own module icons
+// (assets/erpnext/icons/desktop_icons/solid/*.svg and
+// assets/frappe/icons/desktop_icons/solid/*.svg — two separate icon
+// sets, confirmed live: clicking into the "Framework" folder revealed
+// a second family of 9 icons served from the frappe path, missed by
+// the first pass over this file which only handled erpnext's) bake
+// the coloured square AND the white glyph into a single flat image —
+// a CSS filter on the <img> can only recolour the whole flat image at
+// once (confirmed: that's what the pre-existing hue-rotate filter
+// already did), it can't strip just one shape and keep the other. So
+// the actual pixels have to come from a different file: this app's
+// own image folder ships a background-stripped, pre-recoloured copy
+// of each of the 22 ERPNext + 9 Frappe solid icons (generated once
+// from the original files — same filenames, so a plain basename swap
+// below is all that's needed). Anything NOT in that set (a future
+// icon, or another installed app's own module icon) is left
+// completely alone rather than guessed at.
 (function () {
-	const SOURCE_PREFIX = "/assets/erpnext/icons/desktop_icons/solid/";
+	const SOURCE_PREFIXES = [
+		"/assets/erpnext/icons/desktop_icons/solid/",
+		"/assets/frappe/icons/desktop_icons/solid/",
+	];
 	const REPLACEMENT_PREFIX = "/assets/velunext/images/desktop_icons_line/";
 	// These SVGs are served as plain static files, not through the
 	// content-hashed bundle pipeline — confirmed live (curl -I) they
@@ -41,8 +49,9 @@
 	function relink_icons() {
 		document.querySelectorAll(".desktop-icon .icon-container img.app-icon").forEach((img) => {
 			const src = img.getAttribute("src") || "";
-			if (!src.startsWith(SOURCE_PREFIX)) return;
-			const replacement = versioned(src.slice(SOURCE_PREFIX.length));
+			const prefix = SOURCE_PREFIXES.find((p) => src.startsWith(p));
+			if (!prefix) return;
+			const replacement = versioned(src.slice(prefix.length));
 			if (img.dataset.velunextRelinked === replacement) return;
 			img.src = replacement;
 			img.dataset.velunextRelinked = replacement;
