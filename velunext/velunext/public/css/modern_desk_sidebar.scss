@@ -325,25 +325,67 @@
    only way to get a pixel-exact match.
    ========================================================================== */
 
-/* Fallback "letter" icon (no dedicated SVG for that module). This site runs
-   the "Solid" desktop icon style (solid colour block + white glyph), so we
-   match that: solid accent background, white letter. */
+/* Experiment: icon-only, no background block, background REVEALED on
+   hover instead — the opposite of the original always-on solid square.
+   Two cases share the same container:
+   - Image-based module icons: ERPNext's "solid" desktop icon SVGs bake
+     the coloured square AND the white glyph into one flat file — a
+     CSS filter can only recolour the whole image at once, it can't
+     strip one shape and keep the other (confirmed: that's all the
+     previous hue-rotate filter below could ever do). desk_module_icons.js
+     swaps each <img> to a background-stripped, pre-recoloured copy
+     (velunext/public/images/desktop_icons_line/, generated once from
+     the original 22 solid icons — same filenames). No filter is
+     needed on it at rest since the source file is already the exact
+     accent purple.
+   - Fallback "letter" icon (no dedicated SVG for that module): same
+     idea without new assets — just the letter's own text colour.
+   Hover reinstates the classic solid-square-white-glyph look on BOTH,
+   via a single `brightness(0) invert(1)` filter that turns any opaque
+   coloured pixel white while leaving transparency alone — reusing the
+   one purple asset for both states instead of needing a second white
+   copy of each file. */
 .desktop-icon .icon-container {
-	background-color: var(--velunext-accent) !important;
+	background-color: transparent !important;
+	transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
 .desktop-icon .icon-container .desktop-alphabet {
+	color: var(--velunext-accent) !important;
+	transition: color 0.2s ease;
+}
+
+.desktop-icon .icon-container img.app-icon {
+	filter: none;
+	transition: filter 0.2s ease;
+	/* .app-icon is ALSO the class frappe.ui.app_icon uses for an
+	   entirely different component (sidebar app-switcher dropdown,
+	   About dialog) — a pure class-name collision with this grid's own
+	   <img class="app-icon">, confirmed live via document.styleSheets:
+	   the existing ".app-icon { background-color: var(--velunext-accent)
+	   !important }" rule below (written for that other component) was
+	   never visible here before because the old baked-icon file was
+	   fully opaque and covered it regardless. With the background now
+	   stripped out of the icon file itself, that rule bled through and
+	   repainted the whole box solid purple — an icon in the exact same
+	   purple rendered on top was then invisible against its own
+	   background. Explicitly reset back to transparent, scoped tightly
+	   enough (3 selectors deep) to beat the other rule's !important on
+	   specificity without touching what it does elsewhere. */
+	background-color: transparent !important;
+}
+
+.desktop-icon:hover .icon-container {
+	background-color: var(--velunext-accent) !important;
+	transform: scale(1.06);
+}
+
+.desktop-icon:hover .icon-container .desktop-alphabet {
 	color: #ffffff !important;
 }
 
-/* Module icons with their own baked-blue SVG file. All of ERPNext's
-   "solid" desktop icons bake in the exact same blue, #0289F7 — measured
-   (via a canvas round-trip in the actual browser, not guessed) that
-   hue-rotate(50deg) saturate(0.95) maps #0289F7 to rgb(142,92,248),
-   ~3 units away from our #8B5CF6 accent (139,92,246). Recompute if
-   Frappe/ERPNext ever change that source blue. */
-.desktop-icon .icon-container img.app-icon {
-	filter: hue-rotate(50deg) saturate(0.95);
+.desktop-icon:hover .icon-container img.app-icon {
+	filter: brightness(0) invert(1);
 }
 
 /* frappe.ui.app_icon (sidebar app-switcher dropdown, About dialog, etc.) —
@@ -384,6 +426,50 @@
 img[src*="frappe-framework-logo"] {
 	content: url("/assets/velunext/images/framework-icon-amber.svg") !important;
 	filter: none !important;
+}
+
+/* Same icon-only/reveal-on-hover experiment as the rest of the module
+   grid (see the "Experiment" comment above .desktop-icon .icon-container),
+   applied to these two tiles specifically — scoped to
+   .desktop-icon .icon-container so the sidebar header logo and
+   workspace-switcher dropdown's own instances of this same logo
+   (unrelated contexts sharing the same <img src>) are left exactly as
+   they were. Amber, not the theme purple every other tile reveals,
+   since these two have carried their own distinct amber brand colour
+   since the very first pass over this app (they represent the
+   underlying Frappe/ERPNext framework itself, not an ERPNext module —
+   deliberately kept visually distinct from day one). */
+.desktop-icon .icon-container img[src*="frappe-framework-logo"] {
+	content: url("/assets/velunext/images/framework-icon-amber-line.svg") !important;
+}
+
+.desktop-icon:hover .icon-container img[src*="frappe-framework-logo"] {
+	content: url("/assets/velunext/images/framework-icon-amber.svg") !important;
+}
+
+.desktop-icon:hover .icon-container:has(img[src*="frappe-framework-logo"]) {
+	background-color: #f59e0b !important;
+}
+
+/* Top-left corner logo on the "Início" home/module-grid page specifically
+   (header.desktop-navbar > .navbar-home > img#brand-logo — confirmed
+   live, a decorative badge, not a clickable link: cursor stays "auto").
+   It happens to share the exact same <img src> as the Framework tiles
+   above (frappe-framework-logo.svg) via the generic rule, which is why
+   it also showed the amber cube — but its role here is purely "this is
+   home", not "this represents the Frappe framework", so recolouring it
+   amber to match Framework never really fit. Swapped for a plain house
+   glyph instead, reusing Frappe's own lucide "icon-home" path data
+   (pulled straight from the live #all-symbols sprite, not redrawn) so
+   it reads as a native Frappe icon rather than a custom illustration —
+   coloured the theme's primary purple like the rest of the Desk chrome
+   instead of amber, since this spot's meaning changed from "the
+   framework" to "go home". #brand-logo is specific enough on its own
+   (an id) to beat the plain [src*=] rule above without needing
+   .navbar-home in front of it, but it's included anyway to document
+   exactly where this lives. */
+.navbar-home #brand-logo {
+	content: url("/assets/velunext/images/navbar-home-icon.svg") !important;
 }
 
 /* ==========================================================================
@@ -697,6 +783,95 @@ input[type="checkbox"]:disabled:checked {
 	fill: var(--velunext-chart-bar) !important;
 }
 
+/* Donut/pie charts (Accounts Receivable/Payable Ageing, Sales Order
+   Analysis, etc.) are genuinely multi-category, unlike the single-
+   series line/bar charts above — recolouring every slice to one flat
+   accent would make them unreadable. Confirmed live (Payments
+   dashboard): each slice is a <path class="donut-path"> inside
+   .donut-slices, coloured via an inline `stroke` (not `fill` — donuts
+   are drawn as a ring, not a filled wedge), always in the SAME fixed
+   position order regardless of the data behind it (e.g. the ageing
+   buckets are always <0, 0-30, 31-60, 61-90, 91-120, 121-above, in
+   that column order) — confirmed by comparing the AR and AP Ageing
+   donuts side by side, identical stroke order on both despite
+   different underlying values. That makes a positional nth-of-type
+   override reliable here, unlike the per-colour gradient-fill problem
+   above.
+   A purple → amber gradient across slots 1-5 (rather than unrelated
+   accent colours) reads as one deliberate brand ramp instead of a
+   generic default palette, and for an ageing chart specifically it
+   doubles as a soft severity cue — cool violet for the current/not-
+   yet-due buckets, warming to amber as debt gets older. The final slot
+   (121-Above, the worst bucket) deliberately breaks the ramp with a
+   red instead of a 6th amber shade — first tried purely on-brand, but
+   losing that colour cut the "this one is actually dangerous" signal
+   ageing reports rely on, and this codebase already keeps semantic
+   status colours (paid/overdue, etc.) untouched everywhere else rather
+   than forcing them into the two-tone palette. First tried a punchier
+   #dc2626, but user feedback preferred it closer to frappe-charts' own
+   native soft coral-red (rgb(245,107,107) = #f56b6b) — kept exactly
+   that, since it reads as "warning" without being louder than the
+   rest of this otherwise muted palette. */
+.chart-container .donut-slices .donut-path:nth-of-type(1) {
+	stroke: #c4b5fd !important;
+}
+
+.chart-container .donut-slices .donut-path:nth-of-type(2) {
+	stroke: #a78bfa !important;
+}
+
+.chart-container .donut-slices .donut-path:nth-of-type(3) {
+	stroke: var(--velunext-accent) !important;
+}
+
+.chart-container .donut-slices .donut-path:nth-of-type(4) {
+	stroke: var(--velunext-accent-strong) !important;
+}
+
+.chart-container .donut-slices .donut-path:nth-of-type(5) {
+	stroke: var(--velunext-chart-bar) !important;
+}
+
+.chart-container .donut-slices .donut-path:nth-of-type(6) {
+	stroke: #f56b6b !important;
+}
+
+/* The legend swatches (the small squares next to each category label
+   below the donut) are a separate set of elements coloured via a
+   `fill` presentation attribute, same positional order as the slices
+   themselves — confirmed live: real class is .legend-dot (a <rect>).
+   Each dot sits inside its OWN unclassed <g transform="translate(...)">
+   wrapper (one per legend entry, siblings under .chart-legend) with
+   nothing else competing for the `rect` slot inside it — so
+   `.legend-dot:nth-of-type(n)` alone would be wrong (every dot is
+   already "the 1st rect" within its own single-rect parent); the
+   position has to be counted on the <g> wrapper instead. Without this,
+   the ring would match the new palette but its own legend would still
+   list the old default colours right next to it. */
+.chart-container .chart-legend > g:nth-of-type(1) .legend-dot {
+	fill: #c4b5fd !important;
+}
+
+.chart-container .chart-legend > g:nth-of-type(2) .legend-dot {
+	fill: #a78bfa !important;
+}
+
+.chart-container .chart-legend > g:nth-of-type(3) .legend-dot {
+	fill: var(--velunext-accent) !important;
+}
+
+.chart-container .chart-legend > g:nth-of-type(4) .legend-dot {
+	fill: var(--velunext-accent-strong) !important;
+}
+
+.chart-container .chart-legend > g:nth-of-type(5) .legend-dot {
+	fill: var(--velunext-chart-bar) !important;
+}
+
+.chart-container .chart-legend > g:nth-of-type(6) .legend-dot {
+	fill: #f56b6b !important;
+}
+
 /* Dashboard cards (number KPIs + chart widgets share the same .widget
    wrapper) — a calmer border and a purple-tinted heading tie each card
    back to the sidebar/grid styling above instead of Frappe's default
@@ -715,6 +890,180 @@ input[type="checkbox"]:disabled:checked {
 
 .number-widget-box .widget-body .number {
 	color: var(--velunext-sidebar-text-strong);
+}
+
+/* ==========================================================================
+   Navbar language switcher (desk_language_switcher.js)
+   Inserted as a sibling of .desktop-notifications inside the navbar's
+   right-hand icon group (header.desktop-navbar > .flex, confirmed
+   live: display:flex, align-items:center, gap:16px).
+   Built as a real Bootstrap dropdown (.dropdown/.dropdown-menu/
+   .dropdown-item — the exact same markup pattern Frappe's own
+   notifications/avatar menus already use, confirmed live) rather than
+   a native <select>: a native select's OPEN option list is rendered
+   by the OS/browser, not this page, so its hover/selected highlight
+   is NOT reachable by CSS in any mainstream browser — it always shows
+   the platform's default blue no matter what this theme sets. A real
+   DOM menu means every state below is a plain, reliable CSS rule, and
+   Bootstrap's already-loaded JS handles open/close/outside-click for
+   free, same as it does for the notification bell beside it.
+
+   Language marker: a small text badge with the language CODE (EN, PT,
+   ES-CO, ...), not a flag emoji. A flag version shipped first, but was
+   dropped after live feedback on Windows: several flag emoji have no
+   colour glyph in Windows' bundled emoji font and render as plain
+   two-letter text instead of an actual flag image — an OS/font
+   limitation no amount of CSS can reach. A code badge renders
+   identically on every platform with zero font dependency, at the
+   cost of being less visually flashy than a real flag — the
+   deliberate trade-off here.
+   ========================================================================== */
+.velunext-language-btn {
+	height: 20px;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1;
+	padding: 0;
+	border: none;
+	background: transparent;
+	color: var(--velunext-sidebar-text);
+	cursor: pointer;
+	transition: color 0.15s ease;
+}
+
+.velunext-language-btn:hover {
+	color: var(--velunext-accent);
+}
+
+.velunext-language-caret {
+	width: 10px;
+	height: 10px;
+	flex-shrink: 0;
+	stroke: currentColor;
+}
+
+.velunext-language-menu {
+	max-height: 320px;
+	overflow-y: auto;
+	padding: 4px;
+	min-width: 220px;
+}
+
+.velunext-language-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 6px 10px;
+	border-radius: 6px;
+	color: var(--velunext-sidebar-text);
+	font-size: 13px;
+}
+
+.velunext-language-code {
+	flex-shrink: 0;
+	min-width: 28px;
+	padding: 1px 5px;
+	border-radius: 4px;
+	background-color: var(--velunext-panel-bg);
+	color: var(--velunext-accent-strong);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	text-align: center;
+	line-height: 1.5;
+}
+
+.velunext-language-btn .velunext-language-code {
+	background-color: transparent;
+	padding: 0;
+	min-width: 0;
+}
+
+/* Bootstrap's own .dropdown-item:hover/:focus/:active rules (a plain
+   background-color, no !important) are exactly the kind of default
+   this theme is replacing here — no specificity fight needed, a
+   same-order same-specificity rule after core's stylesheet already
+   wins the cascade, confirmed against the same pattern used
+   throughout this file. */
+.velunext-language-item:hover,
+.velunext-language-item:focus {
+	background-color: var(--velunext-panel-bg);
+	color: var(--velunext-accent-strong);
+	text-decoration: none;
+}
+
+.velunext-language-item.is-selected {
+	background-color: var(--velunext-accent);
+	color: #ffffff;
+	font-weight: 600;
+}
+
+.velunext-language-item.is-selected:hover,
+.velunext-language-item.is-selected:focus {
+	background-color: var(--velunext-accent-strong);
+	color: #ffffff;
+}
+
+/* The code badge's own light background/purple text (set above) would
+   otherwise go near-invisible against the selected row's solid purple
+   fill — inverted to a translucent white chip instead of leaving it
+   as dead weight the row's own colour already fought to replace. */
+.velunext-language-item.is-selected .velunext-language-code {
+	background-color: rgba(255, 255, 255, 0.25);
+	color: #ffffff;
+}
+
+/* ==========================================================================
+   Navbar search ("Pesquisa ... Ctrl+K")
+   #desktop-navbar-modal-search had NO border/shadow at all (confirmed
+   live: 0px none, background solid white) — sitting on the navbar's
+   own white background it was basically invisible until hovered,
+   which is the "sem contorno" being fixed here. A permanent soft
+   purple-tinted border makes it read as a real search field at rest,
+   intensifying to the theme's own focus-ring treatment (same recipe
+   as every other input in this theme) on hover — inviting a click
+   rather than looking like plain navbar text.
+
+   Icon colour: confirmed live via document.styleSheets that a more
+   specific inline rule — `.desktop-search-icon > svg { stroke:
+   var(--text-light) }` (an element-combinator selector, edging out the
+   plain `.icon` class rule that already sets --icon-stroke to the
+   theme purple) — was the actual reason the icon stayed neutral grey
+   regardless of the icon system's own accent variable.
+
+   The "Ctrl+K" hint gets a small kbd-style chip instead of bare text —
+   the flourish this section otherwise wouldn't have needed, but it's
+   the detail that makes the whole control read as a deliberately
+   designed command-palette trigger (à la Notion/Linear/GitHub) rather
+   than a stray keyboard hint floating next to a label.
+   ========================================================================== */
+#desktop-navbar-modal-search {
+	border: 1.5px solid rgba(139, 92, 246, 0.28) !important;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+#desktop-navbar-modal-search:hover {
+	border-color: var(--velunext-accent) !important;
+	background-color: var(--velunext-panel-bg) !important;
+	box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+
+.desktop-search-icon > svg {
+	stroke: var(--velunext-accent) !important;
+}
+
+.desktop-keyboard-shortcut {
+	background-color: var(--velunext-panel-bg);
+	border: 1px solid var(--velunext-sidebar-border);
+	border-radius: 4px;
+	padding: 1px 6px;
+	font-family: ui-monospace, "Cascadia Code", monospace;
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--velunext-accent-strong);
 }
 
 /* ==========================================================================

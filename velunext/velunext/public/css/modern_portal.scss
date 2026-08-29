@@ -1,0 +1,442 @@
+/**
+ * VeluNext — Customer Portal (web_include_css)
+ *
+ * Copyright (c) 2026, NovaDX <ola@novadx.pt>
+ * Licensed under the MIT License.
+ *
+ * Covers the native portal routes registered in erpnext/hooks.py's
+ * standard_portal_menu_items (/orders, /invoices, /quotations,
+ * /purchase-orders, /shipments, /addresses, /timesheets, ...), all of
+ * which share the same layout: templates/web.html > .web-sidebar
+ * (templates/includes/web_sidebar.html) + a list of
+ * .web-list-item.transaction-list-item rows
+ * (erpnext/templates/includes/transaction_row.html) — both confirmed
+ * by reading the real templates and by inspecting the live DOM, not
+ * assumed. /me is a structural exception, handled in its own section
+ * below.
+ */
+
+/* ==========================================================================
+   1) Global background + text
+   No .web-page/.web-template wrapper class exists on <body> for these
+   routes (confirmed live — body has no class at all) — that's fine to
+   target directly since this stylesheet (web_include_css) only ever
+   loads on website/portal pages, never on the Desk.
+   ========================================================================== */
+body {
+	background-color: #f8fafc;
+	color: #1f2937;
+}
+
+/* ==========================================================================
+   2) Sidebar navigation (.web-sidebar)
+   .sidebar-item a.active already reads var(--primary) / var(--primary-light)
+   natively (frappe/public/scss website bundle) — --primary-light isn't
+   actually defined anywhere in core (confirmed: only --primary is), so
+   the active state currently renders with no background at all. Setting
+   both variables here is enough on its own; no need to hand-write the
+   active-state rule. Only the plain/hover states (hardcoded colours,
+   not variables) need explicit overrides.
+
+   Icon colour: the injected <svg class="icon icon-md"> (see
+   modern_portal.js) is coloured the same way as every other icon in
+   this theme — through the --icon-stroke/--icon-fill custom properties
+   .icon reads (scss/common/icons.scss), NOT `color`/`currentColor` —
+   confirmed against the exact same component used throughout the Desk
+   theme, so scoped variable overrides per state here, not a `svg { fill
+   }` guess.
+   ========================================================================== */
+:root {
+	--primary: #8b5cf6;
+	--primary-light: rgba(139, 92, 246, 0.1);
+}
+
+/* :not(.active) here, not just a plain `a` selector: .web-sidebar
+   .sidebar-item a and the native .sidebar-item a.active rule have the
+   IDENTICAL specificity (two classes + one element each), so this
+   stylesheet loading after the core website bundle would otherwise win
+   the tie and silently overwrite the active item's colour/background —
+   confirmed live (the active item rendered in plain grey, not purple,
+   before this exclusion was added). */
+.web-sidebar .sidebar-item a:not(.active) {
+	border: none !important;
+	background-color: transparent;
+	border-radius: 8px;
+	color: #4b5563;
+}
+
+.web-sidebar .sidebar-item a {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 16px;
+	font-weight: 500;
+	transition: all 0.2s ease;
+}
+
+.web-sidebar .sidebar-item a .icon {
+	flex-shrink: 0;
+	/* Root cause of the icon/text misalignment reported live: the
+	   native base rule for .icon (scss/common/icons.scss) sets
+	   `margin: 0 auto` — meant to horizontally centre an icon within a
+	   fixed-width, non-flex box elsewhere in Frappe. Inside OUR flex
+	   container, `auto` margins on a flex item absorb any leftover
+	   free space on the main axis instead: the shorter a label is
+	   relative to the row's width, the more free space there is to
+	   distribute, so short labels ("Projetos") pushed their icon much
+	   further right than long ones ("Faturas de Compra", which nearly
+	   fills the row and so had ~0 free space to distribute) — same box,
+	   same CSS, purely a function of each label's text length. Measured
+	   live: overriding this one property took the icon offset from a
+	   label-dependent 16–47px down to a flat, correct 16px for every
+	   item. */
+	margin: 0;
+}
+
+/* The website bundle (different from the Desk theme's icons.scss) adds
+   an extra rule targeting the <use> element directly —
+   ".icon use { stroke: var(--text-muted) }" — which, being more
+   specific than .icon's own "stroke: var(--icon-stroke)", wins
+   regardless of what --icon-stroke is set to. Targeting the <use>
+   directly (well beyond that rule's specificity) is the only way to
+   actually reach it.
+
+   All icons purple by design (matching the Desk sidebar reference,
+   which uses --icon-stroke: var(--velunext-accent) as its DEFAULT for
+   every item, not just the active one): the row's TEXT stays neutral
+   grey/dark for inactive items — only the active row gets purple text
+   + a light-purple pill background — but the ICON itself is purple on
+   every row. Default #8b5cf6, hover/active bumped one shade darker to
+   #7c3aed, mirroring the Desk theme's --velunext-accent /
+   --velunext-sidebar-active-text pair exactly. */
+.web-sidebar .sidebar-item a:not(.active) .icon use {
+	stroke: #8b5cf6;
+}
+
+.web-sidebar .sidebar-item a:hover:not(.active) {
+	color: #1f2937 !important;
+	background-color: #f3f4f6;
+}
+
+.web-sidebar .sidebar-item a:hover:not(.active) .icon use {
+	stroke: #7c3aed;
+}
+
+.web-sidebar .sidebar-item a.active .icon use {
+	stroke: #7c3aed;
+}
+
+.web-sidebar .sidebar-item a.active {
+	font-weight: 600;
+	border-radius: 8px;
+	/* Belt-and-braces beyond the --primary/--primary-light variables
+	   above: !important so this can never again lose a specificity tie
+	   to a sibling rule, regardless of stylesheet order. */
+	color: var(--primary) !important;
+	background-color: var(--primary-light) !important;
+	--icon-stroke: #8b5cf6;
+}
+
+.web-sidebar .sidebar-item a.active:hover {
+	color: var(--primary) !important;
+	background-color: var(--primary-light) !important;
+}
+
+/* 2b) Mobile nav duplicate of the sidebar
+   .web-sidebar is display:none below the lg breakpoint (it lives
+   inside .sidebar-column, which templates/web.html's own sidebar()
+   macro hides on mobile) — confirmed live by measuring it directly
+   (display:none, 0×0 rect) with the mobile menu visibly open at the
+   same time. What's actually visible in the collapsed mobile nav is a
+   SEPARATE render of the same sidebar_items list, from
+   frappe/templates/includes/navbar/navbar_items.html: `{% if
+   show_sidebar and sidebar_items %}<div class="d-block
+   d-lg-none">...<a class="nav-link {{ 'text-dark' if active else
+   'text-muted' }}">`. Different template, different classes (.nav-item
+   /.nav-link, active via .text-dark not .active) — none of the rules
+   above reach it, hence a full parallel set here rather than trying to
+   unify the selectors. modern_portal_icons.js injects icons into both
+   structures already. */
+.d-block.d-lg-none .nav-item a.nav-link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 16px;
+	font-weight: 500;
+	border-radius: 8px;
+	transition: all 0.2s ease;
+	color: #4b5563 !important;
+}
+
+.d-block.d-lg-none .nav-item a.nav-link .icon {
+	/* Same fix as .web-sidebar's icon above, and the same reason:
+	   the native .icon rule's `margin: 0 auto` absorbs this flex row's
+	   leftover space, shifting the icon right by an amount that
+	   depends on how short the label is — not fixed here too. */
+	flex-shrink: 0;
+	margin: 0;
+}
+
+.d-block.d-lg-none .nav-item a.nav-link .icon use {
+	/* Same "all icons purple by default, text stays neutral" rule as
+	   the desktop sidebar above. */
+	stroke: #8b5cf6;
+}
+
+.d-block.d-lg-none .nav-item a.nav-link:hover:not(.text-dark) {
+	background-color: #f3f4f6;
+	color: #1f2937 !important;
+}
+
+.d-block.d-lg-none .nav-item a.nav-link:hover:not(.text-dark) .icon use {
+	stroke: #7c3aed;
+}
+
+.d-block.d-lg-none .nav-item a.nav-link.text-dark {
+	font-weight: 600;
+	color: var(--primary) !important;
+	background-color: var(--primary-light);
+}
+
+.d-block.d-lg-none .nav-item a.nav-link.text-dark .icon use {
+	stroke: #7c3aed;
+}
+
+/* ==========================================================================
+   3) Content cards & listings (.web-list-item)
+   There is no .card in these native list pages — .web-list-item is the
+   real per-row container (erpnext/templates/includes/transaction_row.html),
+   currently borderless/transparent. .card is styled too, defensively,
+   for any other website page that does use plain Bootstrap cards.
+   ========================================================================== */
+.web-list-item,
+.card {
+	background-color: #ffffff;
+	border: none !important;
+	border-radius: 16px;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+	padding: 1rem;
+	margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   4) Buttons & status badges
+   .btn-primary's background is a literal hex baked in at Bootstrap
+   compile time (#171717), not routed through --primary at runtime —
+   confirmed in the shipped website.bundle.css, same as the Desk theme's
+   .btn-primary and the login page's "Continue" button — needs
+   !important for the same reason.
+   .indicator-pill (NOT .badge — that's not what this component is
+   called) is already pill-shaped with pastel colours out of the box
+   (confirmed live: bg rgb(228,245,233)/text rgb(22,121,76) on a green
+   pill) via common/indicator.scss's per-colour loop. Only the "blue"
+   variant needs remapping to the brand purple, the same two variables
+   as the Desk theme — every other status colour (green/red/orange/...)
+   is semantic and deliberately left alone.
+   ========================================================================== */
+.btn-primary {
+	background-color: #8b5cf6 !important;
+	border-color: #8b5cf6 !important;
+	border-radius: 8px !important;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+	background-color: #7c3aed !important;
+	border-color: #7c3aed !important;
+}
+
+:root {
+	--bg-blue: #ede9fe;
+	--text-on-blue: #7c3aed;
+}
+
+/* ==========================================================================
+   5) Mobile (<=768px)
+   Cards go edge-to-edge (no outer side margin) while keeping their own
+   internal padding, per request. The sidebar collapses into
+   .navbar-collapse on mobile (Bootstrap's own behaviour, from
+   templates/web.html's navbar) — the border-radius/border removal
+   above already applies there too since it targets the same
+   .sidebar-item a regardless of viewport, so there's no separate
+   "duplicate border" case to fix.
+   -44px, not -15px: measured live at 375px width, two ancestors add up
+   between .web-list-item and the viewport edge — main.container
+   (24px each side) AND .website-list (20px each side, from
+   list.html's own wrapper) — a plain Bootstrap-gutter guess of -15px
+   only cancelled part of that and left a visible strip on both sides.
+   ========================================================================== */
+@media (max-width: 768px) {
+	.web-list-item,
+	.card {
+		border-radius: 0;
+		margin-left: -44px;
+		margin-right: -44px;
+		padding: 1rem 20px;
+	}
+}
+
+/* ==========================================================================
+   6) New / Edit web-form pages (/issues/new, and any other portal
+   doctype's create/edit page — /addresses/new, etc. — they all share
+   this exact template)
+   Confirmed live: .web-form-container > .breadcrumb-container,
+   .web-form-header, .web-form (frappe/public/js/frappe/form/web_form
+   rendering), with the real field grid inside .form-page >
+   .form-section.visible-section > .form-group (.control-label +
+   .control-input, itself wrapping the actual <input>/<select>/<textarea
+   class="form-control">). None of this overlaps with .web-list-item or
+   .card from section 3 — it's a completely different component with
+   its own native class names, not reused. .submit-btn already inherits
+   the .btn-primary purple styling from section 4 with no extra rule
+   needed here (confirmed: it carries the btn-primary class natively).
+   ========================================================================== */
+.form-page {
+	background-color: #ffffff;
+	border: none;
+	border-radius: 16px;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+	padding: 1.5rem;
+}
+
+.web-form-title {
+	font-weight: 700;
+	color: #1f2937;
+}
+
+.control-label {
+	font-weight: 500;
+	color: #4b5563;
+}
+
+/* !important needed after all (checked live via document.styleSheets,
+   not assumed): core ships a much deeper compound selector —
+   `[data-doctype="Web Form"] .page-content-wrapper .container
+   .page_content .web-form .web-form-wrapper .form-control` (8 levels)
+   — that beats a plain `.form-page .form-control` on specificity alone
+   regardless of load order, and is what was actually forcing
+   `border-style: none` / the flat grey `--control-bg` background here. */
+.form-page .form-control {
+	background-color: #f9fafb !important;
+	border: 1px solid #e5e7eb !important;
+	border-radius: 8px !important;
+	box-shadow: none !important;
+	transition: all 0.2s ease;
+}
+
+.form-page .form-control:focus {
+	outline: none;
+	border-color: #8b5cf6 !important;
+	background-color: #ffffff !important;
+	box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25) !important;
+}
+
+/* Quill (the "Descrição" rich text field) ships its own toolbar/editor
+   chrome, not a .form-control at all — styled separately so it reads
+   as one continuous control rather than a plain grey default box
+   welded to the purple-bordered fields above it. */
+.form-page .ql-toolbar.ql-snow {
+	background-color: #f9fafb;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px 8px 0 0;
+}
+
+.form-page .ql-container.ql-snow {
+	border: 1px solid #e5e7eb;
+	border-top: none;
+	border-radius: 0 0 8px 8px;
+}
+
+/* .discard-btn / .btn-attach: secondary actions, styled as a neutral
+   outline pair so they read as clearly lower-priority than the purple
+   .submit-btn beside them, not as competing calls to action. */
+.right-area .discard-btn,
+.right-area .btn-attach {
+	background-color: transparent;
+	color: #4b5563;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	transition: all 0.2s ease;
+}
+
+.right-area .discard-btn:hover,
+.right-area .btn-attach:hover {
+	background-color: #f3f4f6;
+	color: #1f2937;
+}
+
+/* ==========================================================================
+   7) NovaDX footer credit
+   Appended (by modern_portal_icons.js) as the last child of
+   <main class="container"> — confirmed live to be the one wrapper
+   present on every portal route tested (list pages, /me, /issues/new).
+   The native <footer class="web-footer"> was tried first but is NOT
+   universal: present on the web-form template (/issues/new) but
+   entirely absent from portal list pages (/orders, etc.), so it
+   couldn't be relied on as a single anchor. JS scopes population to
+   portal pages only (sidebar/portal-container/web-form present) — this
+   stylesheet loads on website pages generally, so that page-content
+   check still has to happen in JS to keep the credit from appearing on
+   some future unrelated public/marketing page. A top border + margin
+   here (unlike the login page's variant) exist specifically because
+   this sits directly below ordinary page content (cards, forms) rather
+   than inside its own always-empty element — without them it would
+   read as an accidental extra row, not a deliberate footer. Same
+   visual design as .novadx-login-footer (modern_login.scss), duplicated
+   rather than shared across files since the two components live in
+   structurally unrelated parents (.login-content card vs a bare
+   <main>).
+   ========================================================================== */
+.novadx-portal-footer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	margin-top: 24px;
+	padding: 16px 0;
+	border-top: 1px solid #e5e7eb;
+	font-size: 12px;
+	color: #6b7280;
+}
+
+.novadx-portal-footer img {
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+}
+
+.novadx-portal-footer a {
+	color: #6b7280;
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.novadx-portal-footer a:hover {
+	color: #8b5cf6;
+}
+
+/* ==========================================================================
+   /me — structural exception
+   Does not use .web-sidebar or .web-list-item at all: it's a separate,
+   simpler template (frappe/www/me.html) with .portal-container /
+   .portal-section / .portal-footer, and its own inline <style> that
+   sets body { background-color: var(--subtle-fg) } — inline styles in
+   the page beat an external stylesheet's plain `body` rule above
+   regardless of load order, hence !important here specifically.
+   ========================================================================== */
+body:has(.portal-container) {
+	background-color: #f8fafc !important;
+}
+
+.portal-container .portal-section {
+	background-color: #ffffff;
+	border-radius: 16px;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+	margin-bottom: 1rem;
+}
+
+.my-account-item-link a:hover {
+	color: #8b5cf6;
+}

@@ -52,10 +52,18 @@
 		});
 	}
 
+	// frappe.ready does not exist in this Frappe version (confirmed
+	// live: calling it throws "frappe.ready is not a function") — and
+	// since app_include_js concatenates every imported module into one
+	// script, an uncaught exception here would abort every module after
+	// this one in the bundle, not just this file. Call directly in case
+	// the sidebar is already in the DOM, then let the observer below
+	// catch it otherwise/on future re-renders — no dependency on an API
+	// that may not exist.
+	inject_toggle();
+
 	new MutationObserver(inject_toggle).observe(document.body, {
 		childList: true,
 		subtree: true,
 	});
-
-	frappe.ready(inject_toggle);
 })();
