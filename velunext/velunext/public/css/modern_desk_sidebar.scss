@@ -325,25 +325,67 @@
    only way to get a pixel-exact match.
    ========================================================================== */
 
-/* Fallback "letter" icon (no dedicated SVG for that module). This site runs
-   the "Solid" desktop icon style (solid colour block + white glyph), so we
-   match that: solid accent background, white letter. */
+/* Experiment: icon-only, no background block, background REVEALED on
+   hover instead — the opposite of the original always-on solid square.
+   Two cases share the same container:
+   - Image-based module icons: ERPNext's "solid" desktop icon SVGs bake
+     the coloured square AND the white glyph into one flat file — a
+     CSS filter can only recolour the whole image at once, it can't
+     strip one shape and keep the other (confirmed: that's all the
+     previous hue-rotate filter below could ever do). desk_module_icons.js
+     swaps each <img> to a background-stripped, pre-recoloured copy
+     (velunext/public/images/desktop_icons_line/, generated once from
+     the original 22 solid icons — same filenames). No filter is
+     needed on it at rest since the source file is already the exact
+     accent purple.
+   - Fallback "letter" icon (no dedicated SVG for that module): same
+     idea without new assets — just the letter's own text colour.
+   Hover reinstates the classic solid-square-white-glyph look on BOTH,
+   via a single `brightness(0) invert(1)` filter that turns any opaque
+   coloured pixel white while leaving transparency alone — reusing the
+   one purple asset for both states instead of needing a second white
+   copy of each file. */
 .desktop-icon .icon-container {
-	background-color: var(--velunext-accent) !important;
+	background-color: transparent !important;
+	transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
 .desktop-icon .icon-container .desktop-alphabet {
+	color: var(--velunext-accent) !important;
+	transition: color 0.2s ease;
+}
+
+.desktop-icon .icon-container img.app-icon {
+	filter: none;
+	transition: filter 0.2s ease;
+	/* .app-icon is ALSO the class frappe.ui.app_icon uses for an
+	   entirely different component (sidebar app-switcher dropdown,
+	   About dialog) — a pure class-name collision with this grid's own
+	   <img class="app-icon">, confirmed live via document.styleSheets:
+	   the existing ".app-icon { background-color: var(--velunext-accent)
+	   !important }" rule below (written for that other component) was
+	   never visible here before because the old baked-icon file was
+	   fully opaque and covered it regardless. With the background now
+	   stripped out of the icon file itself, that rule bled through and
+	   repainted the whole box solid purple — an icon in the exact same
+	   purple rendered on top was then invisible against its own
+	   background. Explicitly reset back to transparent, scoped tightly
+	   enough (3 selectors deep) to beat the other rule's !important on
+	   specificity without touching what it does elsewhere. */
+	background-color: transparent !important;
+}
+
+.desktop-icon:hover .icon-container {
+	background-color: var(--velunext-accent) !important;
+	transform: scale(1.06);
+}
+
+.desktop-icon:hover .icon-container .desktop-alphabet {
 	color: #ffffff !important;
 }
 
-/* Module icons with their own baked-blue SVG file. All of ERPNext's
-   "solid" desktop icons bake in the exact same blue, #0289F7 — measured
-   (via a canvas round-trip in the actual browser, not guessed) that
-   hue-rotate(50deg) saturate(0.95) maps #0289F7 to rgb(142,92,248),
-   ~3 units away from our #8B5CF6 accent (139,92,246). Recompute if
-   Frappe/ERPNext ever change that source blue. */
-.desktop-icon .icon-container img.app-icon {
-	filter: hue-rotate(50deg) saturate(0.95);
+.desktop-icon:hover .icon-container img.app-icon {
+	filter: brightness(0) invert(1);
 }
 
 /* frappe.ui.app_icon (sidebar app-switcher dropdown, About dialog, etc.) —
