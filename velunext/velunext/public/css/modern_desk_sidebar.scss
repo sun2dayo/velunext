@@ -428,6 +428,29 @@ img[src*="frappe-framework-logo"] {
 	filter: none !important;
 }
 
+/* Same icon-only/reveal-on-hover experiment as the rest of the module
+   grid (see the "Experiment" comment above .desktop-icon .icon-container),
+   applied to these two tiles specifically — scoped to
+   .desktop-icon .icon-container so the sidebar header logo and
+   workspace-switcher dropdown's own instances of this same logo
+   (unrelated contexts sharing the same <img src>) are left exactly as
+   they were. Amber, not the theme purple every other tile reveals,
+   since these two have carried their own distinct amber brand colour
+   since the very first pass over this app (they represent the
+   underlying Frappe/ERPNext framework itself, not an ERPNext module —
+   deliberately kept visually distinct from day one). */
+.desktop-icon .icon-container img[src*="frappe-framework-logo"] {
+	content: url("/assets/velunext/images/framework-icon-amber-line.svg") !important;
+}
+
+.desktop-icon:hover .icon-container img[src*="frappe-framework-logo"] {
+	content: url("/assets/velunext/images/framework-icon-amber.svg") !important;
+}
+
+.desktop-icon:hover .icon-container:has(img[src*="frappe-framework-logo"]) {
+	background-color: #f59e0b !important;
+}
+
 /* ==========================================================================
    Global primary colour
    Frappe's own default action colour lives entirely in one variable,

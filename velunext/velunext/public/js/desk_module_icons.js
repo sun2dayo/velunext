@@ -35,9 +35,36 @@
 		});
 	}
 
-	relink_icons();
+	// The "Accounting" tile has no single dedicated icon of its own —
+	// confirmed live (and via `bench console`: no "Accounting" Workspace
+	// document exists at all) that it's a client-side GROUPING of
+	// several sibling workspaces that share the "Accounts" module
+	// (Invoicing, Payments, Financial Reports, ...), each with its own
+	// icon but none flagged as the group's. With no single icon to show,
+	// Frappe falls back to a 2x2 mosaic preview of up to 4 of the
+	// group's own children (.icon-container.folder-icon > .icons-container)
+	// — confirmed live this is exactly what rendered. Replaced with a
+	// single dedicated glyph instead (a ledger/ruled-book icon, reused
+	// from ERPNext's OWN "subtle" icon set rather than invented from
+	// scratch) so it reads as one deliberate module icon like every
+	// sibling tile, not a busy 4-way preview grid.
+	function replace_accounting_mosaic() {
+		const folder = document.querySelector('.desktop-icon[data-id="Accounting"] .icon-container.folder-icon');
+		if (!folder || folder.dataset.velunextReplaced) return;
+		folder.dataset.velunextReplaced = "true";
+		folder.classList.remove("folder-icon");
+		folder.innerHTML =
+			'<img class="app-icon" src="' + REPLACEMENT_PREFIX + 'accounting.svg" alt="Accounting">';
+	}
 
-	new MutationObserver(relink_icons).observe(document.body, {
+	function run() {
+		relink_icons();
+		replace_accounting_mosaic();
+	}
+
+	run();
+
+	new MutationObserver(run).observe(document.body, {
 		childList: true,
 		subtree: true,
 	});
