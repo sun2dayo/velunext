@@ -23,12 +23,26 @@
 (function () {
 	const SOURCE_PREFIX = "/assets/erpnext/icons/desktop_icons/solid/";
 	const REPLACEMENT_PREFIX = "/assets/velunext/images/desktop_icons_line/";
+	// These SVGs are served as plain static files, not through the
+	// content-hashed bundle pipeline — confirmed live (curl -I) they
+	// carry `Cache-Control: max-age=31536000` (1 year), same raw-asset
+	// caching behaviour already hit once before in this project. Fixing
+	// taxes.svg on the server alone left every browser that had already
+	// loaded the old broken copy stuck showing it for up to a year,
+	// since the URL never changed. A cache-busting query string is the
+	// fix — bump ASSET_VERSION any time a file in desktop_icons_line/
+	// (or accounting.svg) changes again.
+	const ASSET_VERSION = "2";
+
+	function versioned(path) {
+		return REPLACEMENT_PREFIX + path + "?v=" + ASSET_VERSION;
+	}
 
 	function relink_icons() {
 		document.querySelectorAll(".desktop-icon .icon-container img.app-icon").forEach((img) => {
 			const src = img.getAttribute("src") || "";
 			if (!src.startsWith(SOURCE_PREFIX)) return;
-			const replacement = REPLACEMENT_PREFIX + src.slice(SOURCE_PREFIX.length);
+			const replacement = versioned(src.slice(SOURCE_PREFIX.length));
 			if (img.dataset.velunextRelinked === replacement) return;
 			img.src = replacement;
 			img.dataset.velunextRelinked = replacement;
@@ -54,7 +68,7 @@
 		folder.dataset.velunextReplaced = "true";
 		folder.classList.remove("folder-icon");
 		folder.innerHTML =
-			'<img class="app-icon" src="' + REPLACEMENT_PREFIX + 'accounting.svg" alt="Accounting">';
+			'<img class="app-icon" src="' + versioned("accounting.svg") + '" alt="Accounting">';
 	}
 
 	function run() {
