@@ -711,13 +711,20 @@ input[type="checkbox"]:disabled:checked {
    different underlying values. That makes a positional nth-of-type
    override reliable here, unlike the per-colour gradient-fill problem
    above.
-   A purple → amber gradient across the 6 slices (rather than 6
-   unrelated accent colours) reads as one deliberate brand ramp instead
-   of a generic default palette, and for an ageing chart specifically
-   it doubles as a soft severity cue — cool violet for the current/not-
-   yet-due buckets, warming to amber for the oldest, most overdue one —
-   without resorting to a jarring stoplight red that would clash with
-   the rest of the theme. */
+   A purple → amber gradient across slots 1-5 (rather than unrelated
+   accent colours) reads as one deliberate brand ramp instead of a
+   generic default palette, and for an ageing chart specifically it
+   doubles as a soft severity cue — cool violet for the current/not-
+   yet-due buckets, warming to amber as debt gets older. The final slot
+   (121-Above, the worst bucket) deliberately breaks the ramp with a
+   red instead of a 6th amber shade — first tried purely on-brand, but
+   losing that colour cut the "this one is actually dangerous" signal
+   ageing reports rely on, and this codebase already keeps semantic
+   status colours (paid/overdue, etc.) untouched everywhere else rather
+   than forcing them into the two-tone palette. #dc2626 rather than
+   frappe-charts' native soft red (#f56c6c/rgb(245,107,107)) so it
+   still reads as part of the same warm end of the ramp as the amber
+   before it, not a jarring, unrelated colour. */
 .chart-container .donut-slices .donut-path:nth-of-type(1) {
 	stroke: #c4b5fd !important;
 }
@@ -739,7 +746,7 @@ input[type="checkbox"]:disabled:checked {
 }
 
 .chart-container .donut-slices .donut-path:nth-of-type(6) {
-	stroke: #d97706 !important;
+	stroke: #dc2626 !important;
 }
 
 /* The legend swatches (the small squares next to each category label
@@ -775,7 +782,7 @@ input[type="checkbox"]:disabled:checked {
 }
 
 .chart-container .chart-legend > g:nth-of-type(6) .legend-dot {
-	fill: #d97706 !important;
+	fill: #dc2626 !important;
 }
 
 /* Dashboard cards (number KPIs + chart widgets share the same .widget
