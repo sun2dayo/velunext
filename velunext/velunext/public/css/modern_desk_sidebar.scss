@@ -721,10 +721,11 @@ input[type="checkbox"]:disabled:checked {
    losing that colour cut the "this one is actually dangerous" signal
    ageing reports rely on, and this codebase already keeps semantic
    status colours (paid/overdue, etc.) untouched everywhere else rather
-   than forcing them into the two-tone palette. #dc2626 rather than
-   frappe-charts' native soft red (#f56c6c/rgb(245,107,107)) so it
-   still reads as part of the same warm end of the ramp as the amber
-   before it, not a jarring, unrelated colour. */
+   than forcing them into the two-tone palette. First tried a punchier
+   #dc2626, but user feedback preferred it closer to frappe-charts' own
+   native soft coral-red (rgb(245,107,107) = #f56b6b) — kept exactly
+   that, since it reads as "warning" without being louder than the
+   rest of this otherwise muted palette. */
 .chart-container .donut-slices .donut-path:nth-of-type(1) {
 	stroke: #c4b5fd !important;
 }
@@ -746,7 +747,7 @@ input[type="checkbox"]:disabled:checked {
 }
 
 .chart-container .donut-slices .donut-path:nth-of-type(6) {
-	stroke: #dc2626 !important;
+	stroke: #f56b6b !important;
 }
 
 /* The legend swatches (the small squares next to each category label
@@ -782,7 +783,7 @@ input[type="checkbox"]:disabled:checked {
 }
 
 .chart-container .chart-legend > g:nth-of-type(6) .legend-dot {
-	fill: #dc2626 !important;
+	fill: #f56b6b !important;
 }
 
 /* Dashboard cards (number KPIs + chart widgets share the same .widget
