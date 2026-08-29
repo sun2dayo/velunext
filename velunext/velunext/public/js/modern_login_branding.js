@@ -37,7 +37,7 @@
 		link.href = "https://novadx.pt";
 		link.target = "_blank";
 		link.rel = "noopener";
-		link.textContent = "Powered by NovaDX";
+		link.textContent = "Theme Powered by NovaDX";
 
 		footer.appendChild(img);
 		footer.appendChild(link);
