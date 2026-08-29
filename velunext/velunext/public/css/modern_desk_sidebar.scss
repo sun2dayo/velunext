@@ -697,6 +697,87 @@ input[type="checkbox"]:disabled:checked {
 	fill: var(--velunext-chart-bar) !important;
 }
 
+/* Donut/pie charts (Accounts Receivable/Payable Ageing, Sales Order
+   Analysis, etc.) are genuinely multi-category, unlike the single-
+   series line/bar charts above — recolouring every slice to one flat
+   accent would make them unreadable. Confirmed live (Payments
+   dashboard): each slice is a <path class="donut-path"> inside
+   .donut-slices, coloured via an inline `stroke` (not `fill` — donuts
+   are drawn as a ring, not a filled wedge), always in the SAME fixed
+   position order regardless of the data behind it (e.g. the ageing
+   buckets are always <0, 0-30, 31-60, 61-90, 91-120, 121-above, in
+   that column order) — confirmed by comparing the AR and AP Ageing
+   donuts side by side, identical stroke order on both despite
+   different underlying values. That makes a positional nth-of-type
+   override reliable here, unlike the per-colour gradient-fill problem
+   above.
+   A purple → amber gradient across the 6 slices (rather than 6
+   unrelated accent colours) reads as one deliberate brand ramp instead
+   of a generic default palette, and for an ageing chart specifically
+   it doubles as a soft severity cue — cool violet for the current/not-
+   yet-due buckets, warming to amber for the oldest, most overdue one —
+   without resorting to a jarring stoplight red that would clash with
+   the rest of the theme. */
+.chart-container .donut-slices .donut-path:nth-of-type(1) {
+	stroke: #c4b5fd !important;
+}
+
+.chart-container .donut-slices .donut-path:nth-of-type(2) {
+	stroke: #a78bfa !important;
+}
+
+.chart-container .donut-slices .donut-path:nth-of-type(3) {
+	stroke: var(--velunext-accent) !important;
+}
+
+.chart-container .donut-slices .donut-path:nth-of-type(4) {
+	stroke: var(--velunext-accent-strong) !important;
+}
+
+.chart-container .donut-slices .donut-path:nth-of-type(5) {
+	stroke: var(--velunext-chart-bar) !important;
+}
+
+.chart-container .donut-slices .donut-path:nth-of-type(6) {
+	stroke: #d97706 !important;
+}
+
+/* The legend swatches (the small squares next to each category label
+   below the donut) are a separate set of elements coloured via a
+   `fill` presentation attribute, same positional order as the slices
+   themselves — confirmed live: real class is .legend-dot (a <rect>).
+   Each dot sits inside its OWN unclassed <g transform="translate(...)">
+   wrapper (one per legend entry, siblings under .chart-legend) with
+   nothing else competing for the `rect` slot inside it — so
+   `.legend-dot:nth-of-type(n)` alone would be wrong (every dot is
+   already "the 1st rect" within its own single-rect parent); the
+   position has to be counted on the <g> wrapper instead. Without this,
+   the ring would match the new palette but its own legend would still
+   list the old default colours right next to it. */
+.chart-container .chart-legend > g:nth-of-type(1) .legend-dot {
+	fill: #c4b5fd !important;
+}
+
+.chart-container .chart-legend > g:nth-of-type(2) .legend-dot {
+	fill: #a78bfa !important;
+}
+
+.chart-container .chart-legend > g:nth-of-type(3) .legend-dot {
+	fill: var(--velunext-accent) !important;
+}
+
+.chart-container .chart-legend > g:nth-of-type(4) .legend-dot {
+	fill: var(--velunext-accent-strong) !important;
+}
+
+.chart-container .chart-legend > g:nth-of-type(5) .legend-dot {
+	fill: var(--velunext-chart-bar) !important;
+}
+
+.chart-container .chart-legend > g:nth-of-type(6) .legend-dot {
+	fill: #d97706 !important;
+}
+
 /* Dashboard cards (number KPIs + chart widgets share the same .widget
    wrapper) — a calmer border and a purple-tinted heading tie each card
    back to the sidebar/grid styling above instead of Frappe's default
