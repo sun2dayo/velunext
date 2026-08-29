@@ -6,6 +6,8 @@ Built by [NovaDX](https://novadx.pt) for its ERPNext instances.
 
 **Current version:** 1.1.0
 
+**Compatibility:** Frappe 16.x / ERPNext 16.x (built and tested against Frappe 16.31.0 / ERPNext 16.32.1)
+
 ## Screenshots
 
 **Login**
