@@ -32,103 +32,18 @@
 // so every state is a plain CSS rule, and it gets Bootstrap's existing
 // open/close/outside-click/Escape handling for free (already loaded
 // globally, nothing new to wire up).
+//
+// Second version added Unicode flag emoji per language. Dropped after
+// user feedback (confirmed on their own Windows machine): several
+// flag emoji don't have a colour glyph in Windows' emoji font and
+// render as plain two-letter text instead of a flag image — a real
+// OS/font limitation, not something fixable from CSS/HTML. Rather than
+// hand-building ~80 flag SVGs (no reliable source to verify each one
+// against in this environment, and a real accuracy/maintenance risk),
+// switched to showing the language CODE itself in a small badge — it
+// renders identically everywhere with zero font dependency, and is a
+// pattern plenty of real products already use for exactly this reason.
 (function () {
-	// Only assigned where a language maps to one clearly uncontroversial
-	// sovereign country, or where Frappe's own label already names one
-	// explicitly (the "(Country)" variants). Left as a neutral globe for
-	// stateless/regional languages (Catalan, Kurdish, Tibetan) and for
-	// "eo", which Frappe repurposes as its in-context translation tool
-	// rather than actual Esperanto — picking a flag for any of those
-	// would be a political statement this theme has no business making.
-	const FLAGS = {
-		af: "🇿🇦",
-		am: "🇪🇹",
-		ar: "🇸🇦",
-		bg: "🇧🇬",
-		bn: "🇧🇩",
-		bo: "🌐",
-		bs: "🇧🇦",
-		ca: "🌐",
-		cs: "🇨🇿",
-		da: "🇩🇰",
-		de: "🇩🇪",
-		el: "🇬🇷",
-		en: "🇬🇧",
-		"en-GB": "🇬🇧",
-		"en-US": "🇺🇸",
-		eo: "🌐",
-		es: "🇪🇸",
-		"es-AR": "🇦🇷",
-		"es-BO": "🇧🇴",
-		"es-CL": "🇨🇱",
-		"es-CO": "🇨🇴",
-		"es-DO": "🇩🇴",
-		"es-EC": "🇪🇨",
-		"es-GT": "🇬🇹",
-		"es-MX": "🇲🇽",
-		"es-NI": "🇳🇮",
-		"es-PE": "🇵🇪",
-		et: "🇪🇪",
-		fa: "🇮🇷",
-		fi: "🇫🇮",
-		fil: "🇵🇭",
-		fr: "🇫🇷",
-		gu: "🇮🇳",
-		he: "🇮🇱",
-		hi: "🇮🇳",
-		hr: "🇭🇷",
-		hu: "🇭🇺",
-		id: "🇮🇩",
-		is: "🇮🇸",
-		it: "🇮🇹",
-		ja: "🇯🇵",
-		km: "🇰🇭",
-		kn: "🇮🇳",
-		ko: "🇰🇷",
-		ku: "🌐",
-		lo: "🇱🇦",
-		lt: "🇱🇹",
-		lv: "🇱🇻",
-		mk: "🇲🇰",
-		ml: "🇮🇳",
-		mn: "🇲🇳",
-		mr: "🇮🇳",
-		ms: "🇲🇾",
-		my: "🇲🇲",
-		nb: "🇳🇴",
-		nl: "🇳🇱",
-		no: "🇳🇴",
-		pl: "🇵🇱",
-		ps: "🇦🇫",
-		pt: "🇵🇹",
-		"pt-BR": "🇧🇷",
-		ro: "🇷🇴",
-		ru: "🇷🇺",
-		rw: "🇷🇼",
-		si: "🇱🇰",
-		sk: "🇸🇰",
-		sl: "🇸🇮",
-		sq: "🇦🇱",
-		sr: "🇷🇸",
-		"sr-CS": "🇷🇸",
-		sv: "🇸🇪",
-		sw: "🇹🇿",
-		ta: "🇮🇳",
-		te: "🇮🇳",
-		th: "🇹🇭",
-		tr: "🇹🇷",
-		uk: "🇺🇦",
-		ur: "🇵🇰",
-		uz: "🇺🇿",
-		vi: "🇻🇳",
-		zh: "🇨🇳",
-		"zh-TW": "🇹🇼",
-	};
-
-	function flag_for(lang_code) {
-		return FLAGS[lang_code] || "🌐";
-	}
-
 	function current_language() {
 		return frappe.boot.lang || "en";
 	}
@@ -146,8 +61,7 @@
 	// tool for crowd-translating the frappe/frappe project on Crowdin,
 	// completely unrelated to this customer's ERPNext instance. Picking
 	// it here hijacked the whole page with a Crowdin login modal instead
-	// of changing anything — excluded from the selectable list entirely
-	// rather than just skipping its flag.
+	// of changing anything — excluded from the selectable list entirely.
 	function selectable_languages() {
 		return frappe.get_languages().filter((lang) => lang.value !== "eo");
 	}
@@ -176,8 +90,8 @@
 			item.href = "#";
 			item.dataset.lang = lang.value;
 			item.innerHTML =
-				'<span class="velunext-language-flag">' +
-				flag_for(lang.value) +
+				'<span class="velunext-language-code">' +
+				frappe.utils.escape_html(lang.value.toUpperCase()) +
 				"</span><span>" +
 				frappe.utils.escape_html(lang.label) +
 				"</span>";
@@ -207,8 +121,8 @@
 			'<button type="button" class="btn-reset nav-link text-muted velunext-language-btn" ' +
 			'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="' +
 			__("Change language") +
-			'"><span class="velunext-language-flag">' +
-			flag_for(selected) +
+			'"><span class="velunext-language-code">' +
+			frappe.utils.escape_html(selected.toUpperCase()) +
 			'</span><span class="velunext-language-label">' +
 			frappe.utils.escape_html(label_for(selected)) +
 			'</span><svg class="icon icon-xs velunext-language-caret"><use href="#icon-chevron-down"></use></svg></button>' +

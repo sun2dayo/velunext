@@ -821,6 +821,16 @@ input[type="checkbox"]:disabled:checked {
    DOM menu means every state below is a plain, reliable CSS rule, and
    Bootstrap's already-loaded JS handles open/close/outside-click for
    free, same as it does for the notification bell beside it.
+
+   Language marker: a small text badge with the language CODE (EN, PT,
+   ES-CO, ...), not a flag emoji. A flag version shipped first, but was
+   dropped after live feedback on Windows: several flag emoji have no
+   colour glyph in Windows' bundled emoji font and render as plain
+   two-letter text instead of an actual flag image — an OS/font
+   limitation no amount of CSS can reach. A code badge renders
+   identically on every platform with zero font dependency, at the
+   cost of being less visually flashy than a real flag — the
+   deliberate trade-off here.
    ========================================================================== */
 .velunext-language-btn {
 	height: 20px;
@@ -840,10 +850,6 @@ input[type="checkbox"]:disabled:checked {
 
 .velunext-language-btn:hover {
 	color: var(--velunext-accent);
-}
-
-.velunext-language-btn .velunext-language-flag {
-	font-size: 14px;
 }
 
 .velunext-language-caret {
@@ -870,10 +876,24 @@ input[type="checkbox"]:disabled:checked {
 	font-size: 13px;
 }
 
-.velunext-language-flag {
-	font-size: 15px;
-	line-height: 1;
+.velunext-language-code {
 	flex-shrink: 0;
+	min-width: 28px;
+	padding: 1px 5px;
+	border-radius: 4px;
+	background-color: var(--velunext-panel-bg);
+	color: var(--velunext-accent-strong);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	text-align: center;
+	line-height: 1.5;
+}
+
+.velunext-language-btn .velunext-language-code {
+	background-color: transparent;
+	padding: 0;
+	min-width: 0;
 }
 
 /* Bootstrap's own .dropdown-item:hover/:focus/:active rules (a plain
@@ -898,6 +918,15 @@ input[type="checkbox"]:disabled:checked {
 .velunext-language-item.is-selected:hover,
 .velunext-language-item.is-selected:focus {
 	background-color: var(--velunext-accent-strong);
+	color: #ffffff;
+}
+
+/* The code badge's own light background/purple text (set above) would
+   otherwise go near-invisible against the selected row's solid purple
+   fill — inverted to a translucent white chip instead of leaving it
+   as dead weight the row's own colour already fought to replace. */
+.velunext-language-item.is-selected .velunext-language-code {
+	background-color: rgba(255, 255, 255, 0.25);
 	color: #ffffff;
 }
 
