@@ -133,6 +133,25 @@
 		return frappe.boot.lang || "en";
 	}
 
+	function label_for(lang_code) {
+		const match = selectable_languages().find((lang) => lang.value === lang_code);
+		return match ? match.label : lang_code;
+	}
+
+	// "eo" is listed by frappe.get_languages() as "In-Context
+	// Translation", but it is NOT a real display language: confirmed
+	// live (and in frappe/www/desk.html's own source) that setting the
+	// user's language to "eo" makes the Desk template inject Crowdin's
+	// JIPT script and _jipt project config — Frappe's own maintainers'
+	// tool for crowd-translating the frappe/frappe project on Crowdin,
+	// completely unrelated to this customer's ERPNext instance. Picking
+	// it here hijacked the whole page with a Crowdin login modal instead
+	// of changing anything — excluded from the selectable list entirely
+	// rather than just skipping its flag.
+	function selectable_languages() {
+		return frappe.get_languages().filter((lang) => lang.value !== "eo");
+	}
+
 	function switch_language(lang_code) {
 		frappe.dom.freeze();
 		frappe
@@ -150,7 +169,7 @@
 	}
 
 	function build_menu(container, selected) {
-		frappe.get_languages().forEach((lang) => {
+		selectable_languages().forEach((lang) => {
 			const item = document.createElement("a");
 			item.className = "dropdown-item velunext-language-item";
 			if (lang.value === selected) item.classList.add("is-selected");
@@ -190,7 +209,9 @@
 			__("Change language") +
 			'"><span class="velunext-language-flag">' +
 			flag_for(selected) +
-			'</span></button>' +
+			'</span><span class="velunext-language-label">' +
+			frappe.utils.escape_html(label_for(selected)) +
+			'</span><svg class="icon icon-xs velunext-language-caret"><use href="#icon-chevron-down"></use></svg></button>' +
 			'<div class="dropdown-menu dropdown-menu-right velunext-language-menu" role="menu"></div>';
 
 		build_menu(wrapper.querySelector(".velunext-language-menu"), selected);

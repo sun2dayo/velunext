@@ -824,21 +824,33 @@ input[type="checkbox"]:disabled:checked {
    ========================================================================== */
 .velunext-language-btn {
 	height: 20px;
-	width: 20px;
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	font-size: 14px;
+	gap: 6px;
+	font-size: 13px;
+	font-weight: 500;
 	line-height: 1;
 	padding: 0;
 	border: none;
 	background: transparent;
+	color: var(--velunext-sidebar-text);
 	cursor: pointer;
-	transition: transform 0.15s ease;
+	transition: color 0.15s ease;
 }
 
 .velunext-language-btn:hover {
-	transform: scale(1.1);
+	color: var(--velunext-accent);
+}
+
+.velunext-language-btn .velunext-language-flag {
+	font-size: 14px;
+}
+
+.velunext-language-caret {
+	width: 10px;
+	height: 10px;
+	flex-shrink: 0;
+	stroke: currentColor;
 }
 
 .velunext-language-menu {
