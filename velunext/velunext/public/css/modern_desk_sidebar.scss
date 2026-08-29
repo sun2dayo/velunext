@@ -807,6 +807,42 @@ input[type="checkbox"]:disabled:checked {
 }
 
 /* ==========================================================================
+   Navbar language switcher (desk_language_switcher.js)
+   Inserted as a sibling of .desktop-notifications inside the navbar's
+   right-hand icon group (header.desktop-navbar > .flex, confirmed
+   live: display:flex, align-items:center, gap:16px) — a plain <select>
+   rather than a custom-built dropdown menu, both for simplicity/native
+   keyboard+screen-reader behaviour and because it mirrors Frappe's own
+   website language-switcher (#language-switcher, also a bare
+   <select class="form-control">). Sized and coloured to match the
+   .desktop-notification-icon it sits beside (20px tall, same muted
+   grey, no visible box) rather than looking like a stray form control
+   dropped into an icon row.
+   ========================================================================== */
+.velunext-language-switcher {
+	display: flex;
+	align-items: center;
+}
+
+.velunext-language-select {
+	height: 20px;
+	padding: 0 4px 0 0;
+	border: none;
+	background: transparent;
+	color: var(--velunext-sidebar-text);
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: color 0.2s ease;
+}
+
+.velunext-language-select:hover,
+.velunext-language-select:focus {
+	color: var(--velunext-accent);
+	outline: none;
+}
+
+/* ==========================================================================
    Boot splash screen (the blue logo shown for a couple seconds on
    /desk while it loads — after login, and on a hard refresh of the
    Desk)
