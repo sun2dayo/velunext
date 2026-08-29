@@ -451,6 +451,27 @@ img[src*="frappe-framework-logo"] {
 	background-color: #f59e0b !important;
 }
 
+/* Top-left corner logo on the "Início" home/module-grid page specifically
+   (header.desktop-navbar > .navbar-home > img#brand-logo — confirmed
+   live, a decorative badge, not a clickable link: cursor stays "auto").
+   It happens to share the exact same <img src> as the Framework tiles
+   above (frappe-framework-logo.svg) via the generic rule, which is why
+   it also showed the amber cube — but its role here is purely "this is
+   home", not "this represents the Frappe framework", so recolouring it
+   amber to match Framework never really fit. Swapped for a plain house
+   glyph instead, reusing Frappe's own lucide "icon-home" path data
+   (pulled straight from the live #all-symbols sprite, not redrawn) so
+   it reads as a native Frappe icon rather than a custom illustration —
+   coloured the theme's primary purple like the rest of the Desk chrome
+   instead of amber, since this spot's meaning changed from "the
+   framework" to "go home". #brand-logo is specific enough on its own
+   (an id) to beat the plain [src*=] rule above without needing
+   .navbar-home in front of it, but it's included anyway to document
+   exactly where this lives. */
+.navbar-home #brand-logo {
+	content: url("/assets/velunext/images/navbar-home-icon.svg") !important;
+}
+
 /* ==========================================================================
    Global primary colour
    Frappe's own default action colour lives entirely in one variable,
