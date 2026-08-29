@@ -931,6 +931,56 @@ input[type="checkbox"]:disabled:checked {
 }
 
 /* ==========================================================================
+   Navbar search ("Pesquisa ... Ctrl+K")
+   #desktop-navbar-modal-search had NO border/shadow at all (confirmed
+   live: 0px none, background solid white) — sitting on the navbar's
+   own white background it was basically invisible until hovered,
+   which is the "sem contorno" being fixed here. A permanent soft
+   purple-tinted border makes it read as a real search field at rest,
+   intensifying to the theme's own focus-ring treatment (same recipe
+   as every other input in this theme) on hover — inviting a click
+   rather than looking like plain navbar text.
+
+   Icon colour: confirmed live via document.styleSheets that a more
+   specific inline rule — `.desktop-search-icon > svg { stroke:
+   var(--text-light) }` (an element-combinator selector, edging out the
+   plain `.icon` class rule that already sets --icon-stroke to the
+   theme purple) — was the actual reason the icon stayed neutral grey
+   regardless of the icon system's own accent variable.
+
+   The "Ctrl+K" hint gets a small kbd-style chip instead of bare text —
+   the flourish this section otherwise wouldn't have needed, but it's
+   the detail that makes the whole control read as a deliberately
+   designed command-palette trigger (à la Notion/Linear/GitHub) rather
+   than a stray keyboard hint floating next to a label.
+   ========================================================================== */
+#desktop-navbar-modal-search {
+	border: 1.5px solid rgba(139, 92, 246, 0.28) !important;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+#desktop-navbar-modal-search:hover {
+	border-color: var(--velunext-accent) !important;
+	background-color: var(--velunext-panel-bg) !important;
+	box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+
+.desktop-search-icon > svg {
+	stroke: var(--velunext-accent) !important;
+}
+
+.desktop-keyboard-shortcut {
+	background-color: var(--velunext-panel-bg);
+	border: 1px solid var(--velunext-sidebar-border);
+	border-radius: 4px;
+	padding: 1px 6px;
+	font-family: ui-monospace, "Cascadia Code", monospace;
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--velunext-accent-strong);
+}
+
+/* ==========================================================================
    Boot splash screen (the blue logo shown for a couple seconds on
    /desk while it loads — after login, and on a hard refresh of the
    Desk)
