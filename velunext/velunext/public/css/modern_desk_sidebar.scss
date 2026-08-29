@@ -810,36 +810,83 @@ input[type="checkbox"]:disabled:checked {
    Navbar language switcher (desk_language_switcher.js)
    Inserted as a sibling of .desktop-notifications inside the navbar's
    right-hand icon group (header.desktop-navbar > .flex, confirmed
-   live: display:flex, align-items:center, gap:16px) — a plain <select>
-   rather than a custom-built dropdown menu, both for simplicity/native
-   keyboard+screen-reader behaviour and because it mirrors Frappe's own
-   website language-switcher (#language-switcher, also a bare
-   <select class="form-control">). Sized and coloured to match the
-   .desktop-notification-icon it sits beside (20px tall, same muted
-   grey, no visible box) rather than looking like a stray form control
-   dropped into an icon row.
+   live: display:flex, align-items:center, gap:16px).
+   Built as a real Bootstrap dropdown (.dropdown/.dropdown-menu/
+   .dropdown-item — the exact same markup pattern Frappe's own
+   notifications/avatar menus already use, confirmed live) rather than
+   a native <select>: a native select's OPEN option list is rendered
+   by the OS/browser, not this page, so its hover/selected highlight
+   is NOT reachable by CSS in any mainstream browser — it always shows
+   the platform's default blue no matter what this theme sets. A real
+   DOM menu means every state below is a plain, reliable CSS rule, and
+   Bootstrap's already-loaded JS handles open/close/outside-click for
+   free, same as it does for the notification bell beside it.
    ========================================================================== */
-.velunext-language-switcher {
+.velunext-language-btn {
+	height: 20px;
+	width: 20px;
 	display: flex;
 	align-items: center;
-}
-
-.velunext-language-select {
-	height: 20px;
-	padding: 0 4px 0 0;
+	justify-content: center;
+	font-size: 14px;
+	line-height: 1;
+	padding: 0;
 	border: none;
 	background: transparent;
-	color: var(--velunext-sidebar-text);
-	font-size: 12px;
-	font-weight: 500;
 	cursor: pointer;
-	transition: color 0.2s ease;
+	transition: transform 0.15s ease;
 }
 
-.velunext-language-select:hover,
-.velunext-language-select:focus {
-	color: var(--velunext-accent);
-	outline: none;
+.velunext-language-btn:hover {
+	transform: scale(1.1);
+}
+
+.velunext-language-menu {
+	max-height: 320px;
+	overflow-y: auto;
+	padding: 4px;
+	min-width: 220px;
+}
+
+.velunext-language-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 6px 10px;
+	border-radius: 6px;
+	color: var(--velunext-sidebar-text);
+	font-size: 13px;
+}
+
+.velunext-language-flag {
+	font-size: 15px;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+/* Bootstrap's own .dropdown-item:hover/:focus/:active rules (a plain
+   background-color, no !important) are exactly the kind of default
+   this theme is replacing here — no specificity fight needed, a
+   same-order same-specificity rule after core's stylesheet already
+   wins the cascade, confirmed against the same pattern used
+   throughout this file. */
+.velunext-language-item:hover,
+.velunext-language-item:focus {
+	background-color: var(--velunext-panel-bg);
+	color: var(--velunext-accent-strong);
+	text-decoration: none;
+}
+
+.velunext-language-item.is-selected {
+	background-color: var(--velunext-accent);
+	color: #ffffff;
+	font-weight: 600;
+}
+
+.velunext-language-item.is-selected:hover,
+.velunext-language-item.is-selected:focus {
+	background-color: var(--velunext-accent-strong);
+	color: #ffffff;
 }
 
 /* ==========================================================================
