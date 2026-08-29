@@ -1,62 +1,62 @@
 # VeluNext
 
-Tema visual moderno para o ERPNext/Frappe — branding, cores, tipografia e micro-interações aplicadas ao Desk, ao ecrã de login e ao Portal de Cliente, mantendo total compatibilidade com o core (nenhum ficheiro nativo do Frappe/ERPNext é alterado).
+A modern visual theme for ERPNext/Frappe — branding, colors, typography, and micro-interactions applied to the Desk, the login screen, and the Customer Portal, while staying fully compatible with core (no native Frappe/ERPNext file is modified).
 
-Desenvolvido pela [NovaDX](https://novadx.pt) para as suas instâncias ERPNext.
+Built by [NovaDX](https://novadx.pt) for its ERPNext instances.
 
-**Versão atual:** 1.1.0
+**Current version:** 1.1.0
 
-## Capturas de ecrã
+## Screenshots
 
 | | |
 |---|---|
-| **Login** | **Desk (Início)** |
+| **Login** | **Desk (Home)** |
 | ![Login](asset/screenshots/login.png) | ![Desk](asset/screenshots/desk-home.png) |
 | **Workspace (Selling)** | **Dashboard (Payments)** |
 | ![Selling](asset/screenshots/selling.png) | ![Dashboard](asset/screenshots/dashboard-payments.png) |
-| **Modo escuro** | **Sidebar recolhida** |
+| **Dark mode** | **Collapsed sidebar** |
 | ![Dark mode](asset/screenshots/dark-mode.png) | ![Sidebar collapsed](asset/screenshots/sidebar-collapsed.png) |
 
-## Identidade visual
+## Brand identity
 
 | | |
 |---|---|
-| Cor primária (roxo) | `#8B5CF6` |
-| Cor secundária (âmbar) | `#F59E0B` |
+| Primary color (purple) | `#8B5CF6` |
+| Secondary color (amber) | `#F59E0B` |
 
-## Funcionalidades
+## Features
 
 ### Desk
 
-- Sidebar, formulários, listas, checkboxes, dashboards e gráficos recoloridos consistentemente para a paleta da marca, sem tocar em ficheiros nativos (tudo via CSS/JS injetados pela app).
-- Ícones dos módulos no ecrã "Início" mostrados apenas com a cor da marca (sem fundo), revelando o quadrado sólido + ícone branco ao passar o rato.
-- Gráficos de donut/pizza (ex.: *Accounts Receivable Ageing*) com um degradê roxo→âmbar coerente com a marca, mantendo vermelho no escalão mais crítico como sinal de alerta.
-- Seletor de idioma na navbar (bandeira/código + nome do idioma), reaproveitando o mecanismo nativo do Frappe (`User.language`) sem introduzir nenhuma capacidade nova.
-- Campo de pesquisa da navbar com contorno visível e ícone na cor da marca.
-- Alternador de modo claro/escuro persistente por utilizador (mecanismo nativo do Frappe).
-- Suporte total ao modo escuro em todos os componentes personalizados.
+- Sidebar, forms, lists, checkboxes, dashboards, and charts consistently recolored to the brand palette, without touching any native file (everything injected via the app's own CSS/JS).
+- Module icons on the Home screen shown as plain brand-colored glyphs (no background), revealing the solid colored square + white icon on hover.
+- Donut/pie charts (e.g. *Accounts Receivable Ageing*) using a purple→amber gradient consistent with the brand, keeping red on the most critical bucket as a deliberate warning signal.
+- Navbar language switcher (flag/code + language name), reusing Frappe's native mechanism (`User.language`) without introducing any new capability.
+- Navbar search field with a visible border and a brand-colored icon.
+- Light/dark mode toggle, persisted per user (Frappe's native mechanism).
+- Full dark mode support across every custom component.
 
-### Login / Autenticação
+### Login / Authentication
 
-- Cartão de login centrado, moderno, com inputs e botões estilizados.
-- Favicon e crédito "Theme Powered by NovaDX" (removível, sem qualquer mecanismo de bloqueio ligado à sua presença).
+- Centered, modern login card with styled inputs and buttons.
+- Favicon and "Theme Powered by NovaDX" credit.
 
-### Portal de Cliente
+### Customer Portal
 
-- Sidebar do portal, cartões de listagem, badges de estado e formulários (ex. criação de ticket) redesenhados.
-- Ícones de navegação injetados dinamicamente por rota.
-- Rodapé "Theme Powered by NovaDX" nas páginas do portal.
+- Portal sidebar, listing cards, status badges, and forms (e.g. ticket creation) redesigned.
+- Navigation icons injected dynamically per route.
+- "Theme Powered by NovaDX" footer on portal pages.
 
-## Instalação
+## Installation
 
 ```bash
 bench get-app velunext git@github.com:sun2dayo/velunext.git
-bench --site <nome-do-site> install-app velunext
-bench --site <nome-do-site> clear-cache
+bench --site <site-name> install-app velunext
+bench --site <site-name> clear-cache
 bench build --app velunext
 ```
 
-## Estrutura do projeto
+## Project structure
 
 ```
 velunext/
@@ -64,19 +64,19 @@ velunext/
 ├── public/
 │   ├── css/                  # modern_desk_sidebar.scss, modern_login.scss, modern_portal.scss
 │   ├── js/                   # theme_toggle.js, desk_language_switcher.js, desk_module_icons.js, ...
-│   └── images/               # ícones e assets recoloridos para a marca
+│   └── images/               # icons and assets recolored for the brand
 ├── templates/
 └── www/
 ```
 
-## Desenvolvimento
+## Development
 
-- Branch de trabalho: `develop`. Alterações só chegam a `main` ao finalizar uma fase de desenvolvimento.
-- Sempre que uma cor/ícone nativo é alterado, o objetivo é reaproveitar o mecanismo existente do Frappe (variáveis CSS, `content: url()`, hooks) em vez de patchar ficheiros do core — o que garante que `bench update` nunca desfaz o tema.
+- Working branch: `develop`. Changes only reach `main` when a development phase is finished.
+- Whenever a native color/icon needs changing, the goal is to reuse an existing Frappe mechanism (CSS variables, `content: url()`, hooks) instead of patching core files — so `bench update` never wipes out the theme.
 
-## Licença
+## License
 
-MIT — ver [license.txt](license.txt).
+MIT — see [license.txt](license.txt).
 
 ---
 
