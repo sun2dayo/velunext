@@ -8,14 +8,23 @@ Built by [NovaDX](https://novadx.pt) for its ERPNext instances.
 
 ## Screenshots
 
-| | |
-|---|---|
-| **Login** | **Desk (Home)** |
-| ![Login](asset/screenshots/login.png) | ![Desk](asset/screenshots/desk-home.png) |
-| **Workspace (Selling)** | **Dashboard (Payments)** |
-| ![Selling](asset/screenshots/selling.png) | ![Dashboard](asset/screenshots/dashboard-payments.png) |
-| **Dark mode** | **Collapsed sidebar** |
-| ![Dark mode](asset/screenshots/dark-mode.png) | ![Sidebar collapsed](asset/screenshots/sidebar-collapsed.png) |
+**Login**
+![Login](asset/screenshots/login.png)
+
+**Desk (Home)**
+![Desk](asset/screenshots/desk-home.png)
+
+**Workspace (Selling)**
+![Selling](asset/screenshots/selling.png)
+
+**Dashboard (Payments)**
+![Dashboard](asset/screenshots/dashboard-payments.png)
+
+**Dark mode**
+![Dark mode](asset/screenshots/dark-mode.png)
+
+**Collapsed sidebar**
+![Sidebar collapsed](asset/screenshots/sidebar-collapsed.png)
 
 ## Brand identity
 
