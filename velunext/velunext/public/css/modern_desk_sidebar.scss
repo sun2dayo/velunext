@@ -293,6 +293,88 @@
 }
 
 /* ==========================================================================
+   Per-app sidebar icon colour
+   Requested for the newly-installed apps: instead of every workspace's
+   own sidebar reading the same theme purple (the two rules just above),
+   the sidebar INSIDE a given app's own workspace (Learning, HR, Frappe
+   CRM, Healthcare, Education, Helpdesk) shows that app's own brand
+   colour instead — "Learning é verde, então os icons do sidebar passa a
+   ser verde".
+   Scoping: the workspace sidebar is `<div class="body-sidebar"
+   data-title="...">`, confirmed live — `data-title` holds the exact
+   Workspace name (e.g. "Learning", "Frappe CRM") and, unlike the page's
+   `data-route` (which changes on every single navigation — a list view
+   inside Learning has data-route "List/LMS Course/List", nothing to do
+   with "Learning" as a string), it stays put for as long as you're
+   anywhere inside that workspace, list views and all — the right anchor
+   to scope a per-app colour to, since most time in a workspace is spent
+   past its landing page. Redeclaring `--icon-stroke` and
+   `--velunext-sidebar-active-text` DIRECTLY here (rather than only the
+   underlying `--velunext-accent`-style tokens) is required, not just
+   tidier: those two are what the icon-colour rules above and below this
+   block actually read, and both are originally SET on the ANCESTOR
+   `.body-sidebar-container` — a custom property's value is fixed at the
+   element that declares it, so redefining an upstream token on this
+   nested `.body-sidebar` would never reach back up to change what the
+   container already resolved. Declaring the two consumed properties
+   directly here sidesteps that entirely, since every icon/label these
+   rules colour is a genuine DESCENDANT of this scoped selector, not the
+   container itself.
+   Each app's own Workspace name(s) (confirmed via the Workspace list —
+   several of these apps split into many small workspaces sharing one
+   module rather than a single one, e.g. Healthcare's own popup groups
+   Diagnostics/Emergency/Inpatient/... exactly like Frappe HR's Despesas/
+   Leaves/Payroll/... popup did) are matched by exact title, not a
+   substring, so ERPNext's own native "CRM" workspace (module CRM) is
+   never confused with the newly-installed "Frappe CRM" (module FCRM)
+   despite the name overlap. Framework/Build has no single dedicated
+   workspace of its own in this list, so it's left out here — it already
+   gets its own accent treatment on the Desk grid icon itself. */
+.body-sidebar[data-title="Learning"] {
+	--icon-stroke: #0e7159;
+	--velunext-sidebar-active-text: #0e7159;
+}
+
+.body-sidebar[data-title="Expenses"],
+.body-sidebar[data-title="HR Setup"],
+.body-sidebar[data-title="Leaves"],
+.body-sidebar[data-title="Payroll"],
+.body-sidebar[data-title="Performance"],
+.body-sidebar[data-title="Recruitment"],
+.body-sidebar[data-title="Shift & Attendance"],
+.body-sidebar[data-title="Tenure"],
+.body-sidebar[data-title="Tax & Benefits"] {
+	--icon-stroke: #06b58b;
+	--velunext-sidebar-active-text: #06b58b;
+}
+
+.body-sidebar[data-title="Frappe CRM"] {
+	--icon-stroke: #ef0bf5;
+	--velunext-sidebar-active-text: #ef0bf5;
+}
+
+.body-sidebar[data-title="Diagnostics"],
+.body-sidebar[data-title="Emergency"],
+.body-sidebar[data-title="Healthcare"],
+.body-sidebar[data-title="Inpatient"],
+.body-sidebar[data-title="Insurance"],
+.body-sidebar[data-title="Outpatient"],
+.body-sidebar[data-title="Rehabilitation"] {
+	--icon-stroke: #ec4848;
+	--velunext-sidebar-active-text: #ec4848;
+}
+
+.body-sidebar[data-title="Education"] {
+	--icon-stroke: #004880;
+	--velunext-sidebar-active-text: #004880;
+}
+
+.body-sidebar[data-title="Helpdesk"] {
+	--icon-stroke: #7d42fb;
+	--velunext-sidebar-active-text: #7d42fb;
+}
+
+/* ==========================================================================
    Form Sidebar (right-hand panel on a document: Assign/Attachments/
    Tags/Share, "Last Edited By" section, etc.)
    A THIRD icon mechanism, different from both cases above:
