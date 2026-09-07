@@ -451,6 +451,94 @@ img[src*="frappe-framework-logo"] {
 	background-color: #f59e0b !important;
 }
 
+/* ==========================================================================
+   Additional installed apps (Education, Frappe CRM, Frappe Learning/LMS,
+   Helpdesk, Frappe HR, Healthcare) — same icon-only/reveal-on-hover
+   experiment as the rest of the module grid, applied to each app's own
+   Desk tile. Unlike the ERPNext/Frappe core "solid" icon set, these
+   tiles carry NO inline background-color (confirmed live via
+   document.querySelector — .icon-container style is null for all of
+   them), so the generic transparent-background rule above already wins
+   with no specificity fight; what actually shows at rest is the app's
+   own logo file, which bakes its own coloured rounded-square background
+   straight into the SVG (same "flat file" problem the original ERPNext
+   icons had). Explicitly kept in each app's OWN brand colour rather than
+   the theme purple — "manter as suas cores... seguindo o mesmo
+   princípio" — so a stripped-background, brand-recoloured copy of each
+   logo lives in desktop_icons_line/ (colours read straight off each
+   original file: Education #004880, Frappe CRM #EF0BF5, Frappe Learning
+   #0E7159, Helpdesk #7D42FB, Frappe HR #06B58B, Healthcare #EC4848).
+   Hover swaps back to the app's own original asset (Education/Healthcare
+   use a flattened "_solid" copy instead, mask/clipPath wrapper stripped
+   for a plain-file swap — same reasoning as everywhere else in this
+   file: fewer moving parts than trusting a filter to fake it, and it
+   is the only reliable option for Healthcare specifically, since its
+   glyph is drawn with a white outline PLUS a second same-colour-as-
+   background "cutout" stroke to fake a woven crossing effect that no
+   filter reproduces cleanly). `?v=2` cache-busts the handful of files
+   that were re-uploaded mid-session while debugging the issue below.
+
+   All six tiles briefly went BLANK WHITE on hover after this swap —
+   traced to the generic reveal-on-hover rule higher up this section
+   (`.desktop-icon:hover .icon-container img.app-icon { filter:
+   brightness(0) invert(1); }`), which matches these images too (they
+   all carry the same `.app-icon` class) and was turning the freshly
+   swapped-in, already-correctly-coloured solid image fully white on
+   top of itself — brightness(0) blackens every opaque pixel, invert(1)
+   then flips pure black to pure white. The Framework tile right above
+   never shows this because its OWN unconditional `filter: none
+   !important` (further up, on the plain `img[src*="frappe-framework-
+   logo"]` selector, not scoped to hover) already wins over that
+   non-!important filter regardless of specificity. Explicit resets
+   below do the same for these six. */
+.desktop-icon .icon-container img[src*="edu-logo.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/education.svg?v=2") !important;
+}
+.desktop-icon:hover .icon-container img[src*="edu-logo.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/education_solid.svg?v=2") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="/crm/images/logo.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/frappe_crm.svg?v=2") !important;
+}
+.desktop-icon:hover .icon-container img[src*="/crm/images/logo.svg"] {
+	content: url("/assets/crm/images/logo.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="lms/frontend/learning.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/frappe_learning.svg?v=2") !important;
+}
+.desktop-icon:hover .icon-container img[src*="lms/frontend/learning.svg"] {
+	content: url("/assets/lms/frontend/learning.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="helpdesk/desk/favicon.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/helpdesk_app.svg?v=2") !important;
+}
+.desktop-icon:hover .icon-container img[src*="helpdesk/desk/favicon.svg"] {
+	content: url("/assets/helpdesk/desk/favicon.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="frappe-hr-logo.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/frappe_hr.svg?v=2") !important;
+}
+.desktop-icon:hover .icon-container img[src*="frappe-hr-logo.svg"] {
+	content: url("/assets/hrms/images/frappe-hr-logo.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="healthcare/images/healthcare.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/healthcare.svg?v=2") !important;
+}
+.desktop-icon:hover .icon-container img[src*="healthcare/images/healthcare.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/healthcare_solid.svg?v=2") !important;
+	filter: none !important;
+}
+
 /* Top-left corner logo on the "Início" home/module-grid page specifically
    (header.desktop-navbar > .navbar-home > img#brand-logo — confirmed
    live, a decorative badge, not a clickable link: cursor stays "auto").
