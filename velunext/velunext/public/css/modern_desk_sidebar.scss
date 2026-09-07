@@ -539,6 +539,98 @@ img[src*="frappe-framework-logo"] {
 	filter: none !important;
 }
 
+/* Frappe HR's OWN sub-workspaces (Despesas, HR Setup, Leaves, Payroll,
+   Performance, Recruitment, Turnos & Presença, Tax & Benefícios,
+   Tenure) — the popup that opens when clicking the "Frappe HR" tile
+   itself. Reported blank/white on hover; traced live to a THIRD
+   flat "solid" icon set this project hadn't accounted for yet
+   (assets/hrms/icons/desktop_icons/solid/*.svg — same bg-square+
+   white-glyph-baked-in shape as ERPNext's and Frappe core's own solid
+   sets, just never added to desk_module_icons.js's relinking list).
+   These render inside the exact same `.desktop-icon` component as the
+   main grid, so they were ALSO catching the generic reveal-on-hover
+   filter (`brightness(0) invert(1)`) meant for the purple line icons —
+   applied to a still-two-tone flat file, that filter turns BOTH the
+   background square and the glyph into the exact same flat white,
+   which is what "blank on hover" actually was. Given the same asset
+   family as the ERPNext/Frappe grid but this app's own teal
+   (#06B58B, matching the Frappe HR tile above), treated the same way
+   as the six newly-installed apps rather than added to the generic
+   erpnext/frappe relinking list — each gets a stripped-background,
+   teal line copy for rest, and its own original file back (already
+   the right colour+glyph, filter reset) on hover. */
+.desktop-icon .icon-container img[src*="hrms/icons/desktop_icons/solid/expenses.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/hr_expenses.svg") !important;
+}
+.desktop-icon:hover .icon-container img[src*="hrms/icons/desktop_icons/solid/expenses.svg"] {
+	content: url("/assets/hrms/icons/desktop_icons/solid/expenses.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="hrms/icons/desktop_icons/solid/hr_setup.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/hr_setup.svg") !important;
+}
+.desktop-icon:hover .icon-container img[src*="hrms/icons/desktop_icons/solid/hr_setup.svg"] {
+	content: url("/assets/hrms/icons/desktop_icons/solid/hr_setup.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="hrms/icons/desktop_icons/solid/leaves.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/hr_leaves.svg") !important;
+}
+.desktop-icon:hover .icon-container img[src*="hrms/icons/desktop_icons/solid/leaves.svg"] {
+	content: url("/assets/hrms/icons/desktop_icons/solid/leaves.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="hrms/icons/desktop_icons/solid/payroll.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/hr_payroll.svg") !important;
+}
+.desktop-icon:hover .icon-container img[src*="hrms/icons/desktop_icons/solid/payroll.svg"] {
+	content: url("/assets/hrms/icons/desktop_icons/solid/payroll.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="hrms/icons/desktop_icons/solid/performance.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/hr_performance.svg") !important;
+}
+.desktop-icon:hover .icon-container img[src*="hrms/icons/desktop_icons/solid/performance.svg"] {
+	content: url("/assets/hrms/icons/desktop_icons/solid/performance.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="hrms/icons/desktop_icons/solid/recruitment.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/hr_recruitment.svg") !important;
+}
+.desktop-icon:hover .icon-container img[src*="hrms/icons/desktop_icons/solid/recruitment.svg"] {
+	content: url("/assets/hrms/icons/desktop_icons/solid/recruitment.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="shift_&_attendance.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/hr_shift_attendance.svg") !important;
+}
+.desktop-icon:hover .icon-container img[src*="shift_&_attendance.svg"] {
+	content: url("/assets/hrms/icons/desktop_icons/solid/shift_&_attendance.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="tax_&_benefits.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/hr_tax_benefits.svg") !important;
+}
+.desktop-icon:hover .icon-container img[src*="tax_&_benefits.svg"] {
+	content: url("/assets/hrms/icons/desktop_icons/solid/tax_&_benefits.svg") !important;
+	filter: none !important;
+}
+
+.desktop-icon .icon-container img[src*="hrms/icons/desktop_icons/solid/tenure.svg"] {
+	content: url("/assets/velunext/images/desktop_icons_line/hr_tenure.svg") !important;
+}
+.desktop-icon:hover .icon-container img[src*="hrms/icons/desktop_icons/solid/tenure.svg"] {
+	content: url("/assets/hrms/icons/desktop_icons/solid/tenure.svg") !important;
+	filter: none !important;
+}
+
 /* Top-left corner logo on the "Início" home/module-grid page specifically
    (header.desktop-navbar > .navbar-home > img#brand-logo — confirmed
    live, a decorative badge, not a clickable link: cursor stays "auto").
